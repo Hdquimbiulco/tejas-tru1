@@ -1,0 +1,546 @@
+<!doctype html>
+<!--
+  =============================================================================
+  SEGUNDO SITIO DE TEJAS (TRUVEC) — versión «mosaico»
+  -----------------------------------------------------------------------------
+  Mismo esquema que el primer sitio:
+  - Contenido (textos, imágenes, estructura): este archivo.
+  - Aspecto (colores, tamaños, posiciones): src/style.css.
+  - Movimiento y lógica (scroll, filtros, cálculo, envío): src/main.js.
+
+  Orden de la página (cada <section> tiene un id; el menú salta a esos id):
+    0. Pantalla de carga                 #carga
+    -  Barra superior, WhatsApp y línea de avance
+    1. Portada: teja de PVC con lluvia   #portada
+    2. Tres materiales con cuadritos     #materiales
+    2b. Láminas de PVC, policarbonato y polipropileno en 3D  #lamina
+    3. Mosaico de imágenes con filtros   #mosaico
+    4. Por qué empezar por el material   #propuesta
+    5. Comparador por grupos             #comparador
+    6. Entrega en obra (línea de paradas)#entrega
+    7. Obras                             #obras
+    8. Cotizar                           #cotizar
+    9. Preguntas                         #preguntas
+    -  Pie con el logo Truvec
+
+  Las imágenes están en public/. En el HTML se escriben sin "public":
+  /img/mosaico/pvc-casa.webp = public/img/mosaico/pvc-casa.webp
+  =============================================================================
+-->
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Truvec · Tejas de PVC, policarbonato y polipropileno</title>
+  <meta name="description" content="Tejas y láminas de PVC, policarbonato y polipropileno para casas, garajes y bodegas, con entrega en obra.">
+  <!-- Letras de Google Fonts: Bricolage Grotesque para títulos y Manrope para el texto -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+
+<!-- ÍCONOS: cada <symbol> es un dibujo que se reutiliza con <svg><use href="#i-nombre"/></svg> -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-gota" viewBox="0 0 24 24"><path d="M12 3s6 6.6 6 11a6 6 0 0 1-12 0c0-4.4 6-11 6-11Z"/></symbol>
+    <symbol id="i-escudo" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 4.5 3.4 8.2 8 9 4.6-.8 8-4.5 8-9V6l-8-3Z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-sol" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+    <symbol id="i-paleta" viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0 0 18c1.1 0 1.6-.8 1.6-1.6 0-1.3-1-1.6-1-2.8 0-1 .8-1.6 1.8-1.6H17a4 4 0 0 0 4-4C21 6.6 17 3 12 3Z"/><circle cx="7.5" cy="11" r="1.2"/><circle cx="10.5" cy="7" r="1.2"/><circle cx="15" cy="7.5" r="1.2"/></symbol>
+    <symbol id="i-luz" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3Z"/></symbol>
+    <symbol id="i-pluma" viewBox="0 0 24 24"><path d="M20 4C11 4 6 9 5 19l-1 1"/><path d="M5 19c7 0 12-3 13-9"/></symbol>
+    <symbol id="i-capas" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/></symbol>
+    <symbol id="i-moneda" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15 9.5c-.5-1-1.6-1.5-3-1.5-1.8 0-3 .9-3 2s1 1.7 3 2 3 .9 3 2-1.2 2-3 2c-1.4 0-2.5-.5-3-1.5M12 6v2M12 16v2"/></symbol>
+    <symbol id="i-onda" viewBox="0 0 24 24"><path d="M3 15c3 0 3-6 6-6s3 6 6 6 3-6 6-6"/></symbol>
+    <symbol id="i-tijera" viewBox="0 0 24 24"><circle cx="6" cy="7" r="3"/><circle cx="6" cy="17" r="3"/><path d="M8.5 8.5 20 18M8.5 15.5 20 6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="i-medio" viewBox="0 0 24 24"><path d="M6 12h12"/></symbol>
+  </defs>
+</svg>
+
+<!-- =========================================================================
+     0. PANTALLA DE CARGA (main.js sección 0 mueve el número y la barra)
+     ========================================================================= -->
+<div id="carga" role="status" aria-live="polite">
+  <p class="logo logo-grande">Truvec<sub>IFT</sub></p>
+  <p id="cargaPct" class="carga-pct">0 %</p>
+  <div class="carga-linea"><span id="cargaBarra"></span></div>
+</div>
+
+<!-- =========================================================================
+     BARRA SUPERIOR: una cápsula flotante con logo, menú y botón Cotizar.
+     En celular el menú se abre con el botón de tres rayas (main.js 6).
+     ========================================================================= -->
+<header class="barra">
+  <a href="#portada" class="logo" aria-label="Truvec, de IFT: ir al inicio">Truvec<sub>IFT</sub></a>
+  <nav class="menu" id="menu" aria-label="Secciones">
+    <a href="#materiales">Materiales</a>
+    <a href="#lamina">3D</a>
+    <a href="#mosaico">Galería</a>
+    <a href="#comparador">Comparador</a>
+    <a href="#entrega">Entrega</a>
+    <a href="#obras">Obras</a>
+    <a href="#preguntas">Preguntas</a>
+  </nav>
+  <a href="#cotizar" class="boton boton-cotizar">Cotizar <span aria-hidden="true">→</span></a>
+  <button type="button" class="menu-boton" aria-controls="menu" aria-expanded="false"><span></span><span></span><span class="oculto">Menú</span></button>
+</header>
+
+<!-- BOTÓN DE WHATSAPP: el número lo pone main.js (constante WHATSAPP) -->
+<a class="wa" data-wa href="https://wa.me/" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp">
+  <span class="wa-texto">¿Dudas? Escribir</span>
+  <span class="wa-icono"><svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M16 3a13 13 0 0 0-11.2 19.6L3 29l6.6-1.7A13 13 0 1 0 16 3Zm0 23.6c-2 0-4-.5-5.7-1.6l-.4-.2-3.9 1 1-3.8-.3-.4A10.6 10.6 0 1 1 16 26.6Zm5.8-7.9c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2l-1 1.2c-.2.2-.4.2-.7.1a8.7 8.7 0 0 1-4.3-3.8c-.3-.6.3-.5.9-1.7.1-.2 0-.4 0-.5l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.1-1.2 2.8s1.2 3.2 1.4 3.5c.2.2 2.4 3.6 5.8 5 2.1.9 3 1 4 .8.7-.1 1.9-.8 2.2-1.5.3-.8.3-1.4.2-1.5-.1-.1-.3-.2-.6-.4Z"/></svg></span>
+</a>
+
+<div class="avance"><span id="avance"></span></div>
+
+<main>
+
+<!-- =========================================================================
+     1. PORTADA: TEJA DE PVC CON LLUVIA (fotogramas atados al scroll)
+       data-frames="lluvia" → carpeta public/frames/lluvia/
+       data-total="180"     → cuántos fotogramas hay (video-final-es.mp4 hasta el segundo 7,5)
+       data-pantallas="5"   → cuánto hay que bajar para recorrerlo
+     Cada .cap aparece en el tramo data-tramo="inicio,fin" (0 = inicio, 1 = final).
+     ========================================================================= -->
+<section id="portada" class="escena" data-frames="lluvia" data-total="180" data-pantallas="5">
+  <canvas></canvas>
+  <div class="velo"></div>
+  <div class="cap cap-inicio" data-tramo="0,0.22">
+    <p class="etiqueta">Teja de PVC · Truvec</p>
+    <h1>Que llueva.</h1>
+    <p class="cap-texto">El techo está listo.</p>
+    <p class="indicacion"><span></span>Desplazar para ver el agua correr</p>
+  </div>
+  <div class="cap cap-lado" data-tramo="0.27,0.5">
+    <p class="cap-num">01</p>
+    <h2>El agua resbala</h2>
+    <p class="cap-texto">El perfil colonial la lleva del caballete al alero, sin charcos ni goteras.</p>
+  </div>
+  <div class="cap cap-lado cap-der" data-tramo="0.54,0.76">
+    <p class="cap-num">02</p>
+    <h2>No se oxida</h2>
+    <p class="cap-texto">La humedad no la corroe: el color sigue ahí después de cada invierno.</p>
+  </div>
+  <div class="cap cap-lado" data-tramo="0.8,1">
+    <p class="cap-num">03</p>
+    <h2>Un techo, tres materiales</h2>
+    <p class="cap-texto">PVC, policarbonato y polipropileno, para la casa, el garaje y la bodega.</p>
+    <a href="#materiales" class="boton boton-claro">Ver materiales <span aria-hidden="true">↓</span></a>
+  </div>
+</section>
+
+<!-- =========================================================================
+     2. TRES MATERIALES
+     Cada .material es una columna: foto, nombre, frase y 4 cuadritos
+     (.rasgo) con ícono, título y texto corto.
+     El color de cada material sale de style="--c: ...".
+     PARA AGREGAR UN CUADRITO: copiar un <li class="rasgo"> y cambiar el ícono
+     (href="#i-...", ver la lista de ÍCONOS arriba), el título y el texto.
+     ========================================================================= -->
+<section id="materiales" class="seccion">
+  <header class="cabecera">
+    <p class="etiqueta">Materiales</p>
+    <h2 class="titulo">Tres materiales, <em>tres formas de cubrir</em></h2>
+    <p class="bajada">Cada uno resuelve una obra distinta. Las características van en cuadritos para leerlas de un vistazo.</p>
+  </header>
+
+  <div class="materiales-rejilla">
+    <!-- 2.1 PVC -->
+    <article class="material" id="mat-pvc" style="--c: var(--pvc)">
+      <figure class="material-foto"><img src="/img/mosaico/pvc-techo.webp" alt="Techo con teja colonial de PVC roja y cumbrera" data-cargar></figure>
+      <p class="material-chip">Para la casa</p>
+      <h3>PVC</h3>
+      <p class="material-frase">Teja colonial que aguanta la humedad.</p>
+      <ul class="rasgos">
+        <li class="rasgo"><svg><use href="#i-gota"/></svg><b>No se oxida</b><span>Soporta la humedad sin corroerse.</span></li>
+        <li class="rasgo"><svg><use href="#i-onda"/></svg><b>Perfil colonial</b><span>Aspecto de teja con traslape entre láminas.</span></li>
+        <li class="rasgo"><svg><use href="#i-paleta"/></svg><b>Colores</b><span>Terracota, rojo, verde, azul y gris.</span></li>
+        <li class="rasgo"><svg><use href="#i-escudo"/></svg><b>Granizo</b><span>Flexiona y vuelve a su forma.</span></li>
+      </ul>
+      <a href="#cotizar" class="enlace" data-material="pvc">Cotizar PVC <span aria-hidden="true">→</span></a>
+    </article>
+
+    <!-- 2.2 POLICARBONATO -->
+    <article class="material" id="mat-pc" style="--c: var(--pc)">
+      <figure class="material-foto"><img src="/img/material/pc.webp" alt="Láminas de policarbonato alveolar en varios colores" data-cargar></figure>
+      <p class="material-chip">Para el garaje y la pérgola</p>
+      <h3>Policarbonato</h3>
+      <p class="material-frase">Cubre sin apagar la luz.</p>
+      <ul class="rasgos">
+        <li class="rasgo"><svg><use href="#i-luz"/></svg><b>Translúcido</b><span>Deja pasar la luz natural.</span></li>
+        <li class="rasgo"><svg><use href="#i-pluma"/></svg><b>Liviano</b><span>Se carga y se instala con facilidad.</span></li>
+        <li class="rasgo"><svg><use href="#i-capas"/></svg><b>Versátil</b><span>Alveolar u ondulado, en varios colores.</span></li>
+        <li class="rasgo"><svg><use href="#i-sol"/></svg><b>Sombra suave</b><span>La luz entra pareja, sin deslumbrar.</span></li>
+      </ul>
+      <a href="#cotizar" class="enlace" data-material="pc">Cotizar policarbonato <span aria-hidden="true">→</span></a>
+    </article>
+
+    <!-- 2.3 POLIPROPILENO -->
+    <article class="material" id="mat-pp" style="--c: var(--pp)">
+      <figure class="material-foto"><img src="/img/material/pp.webp" alt="Lámina ondulada translúcida de polipropileno sostenida a mano" data-cargar></figure>
+      <p class="material-chip">Para la bodega y la ampliación</p>
+      <h3>Polipropileno</h3>
+      <p class="material-frase">Rinde más techo por menos.</p>
+      <ul class="rasgos">
+        <li class="rasgo"><svg><use href="#i-moneda"/></svg><b>Económica</b><span>Cubre más techo con menos inversión.</span></li>
+        <li class="rasgo"><svg><use href="#i-escudo"/></svg><b>Resistente</b><span>Aguanta el sol y la lluvia de cada día.</span></li>
+        <li class="rasgo"><svg><use href="#i-onda"/></svg><b>Flexible</b><span>Se dobla sin quebrarse y vuelve a su forma.</span></li>
+        <li class="rasgo"><svg><use href="#i-tijera"/></svg><b>Fácil de cortar</b><span>Con herramientas comunes, sin equipo pesado.</span></li>
+      </ul>
+      <a href="#cotizar" class="enlace" data-material="pp">Cotizar polipropileno <span aria-hidden="true">→</span></a>
+    </article>
+  </div>
+</section>
+
+<!-- =========================================================================
+     2b. LÁMINAS EN 3D (modelos hechos en Blender)
+     La sección queda fija mientras se baja (4 pantallas):
+       - primera parte: la lámina de PVC gira y cambia de color;
+       - cambio: el PVC baja y llega la lámina de policarbonato;
+       - última parte: el policarbonato gira.
+     (main.js sección 1b; dibujo en src/lamina3d.js).
+     Cada <li> de .colores es un acabado: data-color = código del color y
+     data-material = a qué lámina pertenece (pvc o pc).
+     PARA AGREGAR UN COLOR DE PVC: copiar un <li data-material="pvc"> y cambiar
+     data-color y el nombre.
+     Los textos .detalle aparecen en su tramo data-tramo="inicio,fin".
+     ========================================================================= -->
+<section id="lamina" class="lamina">
+  <canvas aria-label="Láminas de PVC, policarbonato y polipropileno en 3D"></canvas>
+  <div class="lamina-texto">
+    <p class="etiqueta">Láminas en 3D</p>
+    <h2 class="titulo">Cada lámina, <em>de cerca</em></h2>
+    <div class="acabados">
+      <p class="acabados-nombre">PVC</p>
+      <ul class="colores" aria-label="Colores de la lámina de PVC">
+        <li data-material="pvc" data-color="#b5502f" class="activo"><span></span>Terracota</li>
+        <li data-material="pvc" data-color="#b3261e"><span></span>Rojo</li>
+        <li data-material="pvc" data-color="#2f6b4f"><span></span>Verde</li>
+        <li data-material="pvc" data-color="#2b4c7e"><span></span>Azul</li>
+        <li data-material="pvc" data-color="#6b7075"><span></span>Gris</li>
+      </ul>
+      <p class="acabados-nombre">Policarbonato</p>
+      <ul class="colores" aria-label="Acabados de la lámina de policarbonato">
+        <li data-material="pc" data-color="#e8f4f6"><span></span>Cristal</li>
+      </ul>
+      <p class="acabados-nombre">Polipropileno</p>
+      <ul class="colores" aria-label="Acabados de la lámina de polipropileno">
+        <li data-material="pp" data-color="#9c3a24"><span></span>Rojo óxido</li>
+      </ul>
+    </div>
+    <div class="detalles">
+      <p class="detalle" data-tramo="0,0.09"><b>01</b>Cuatro ondas de perfil colonial</p>
+      <p class="detalle" data-tramo="0.09,0.18"><b>02</b>Escalones que imitan el traslape de la teja</p>
+      <p class="detalle" data-tramo="0.18,0.27"><b>03</b>Tornillos con capuchón en la cresta</p>
+      <p class="detalle" data-tramo="0.27,0.36"><b>04</b>Barniz brillante que escurre el agua</p>
+      <p class="detalle" data-tramo="0.42,0.55"><b>05</b>Policarbonato: cubre y deja pasar la luz</p>
+      <p class="detalle" data-tramo="0.55,0.68"><b>06</b>Onda de 76 mm y tornillos con arandela de goma</p>
+      <p class="detalle" data-tramo="0.74,0.87"><b>07</b>Polipropileno: perfil trapezoidal y acabado mate</p>
+      <p class="detalle" data-tramo="0.87,1"><b>08</b>Onda de 13 cm, 35 mm de alto, con capuchón en la cresta</p>
+    </div>
+    <p class="nota pendiente">Modelos de ejemplo: medidas y tonos por confirmar con la ficha técnica.</p>
+  </div>
+</section>
+
+<!-- =========================================================================
+     3. MOSAICO DE IMÁGENES (masonry)
+     Las pestañas filtran por material: data-filtro del botón contra
+     data-material de cada <figure>. Al tocar una foto se abre en grande
+     (<dialog id="visor">, main.js sección 4).
+     PARA AGREGAR UNA FOTO: copiar un <figure class="pieza"> y cambiar el
+     src, el alt y el data-material (pvc, pc o pp).
+     ========================================================================= -->
+<section id="mosaico" class="seccion seccion-clara">
+  <header class="cabecera cabecera-fila">
+    <div>
+      <p class="etiqueta">Galería</p>
+      <h2 class="titulo">Así se ven puestos</h2>
+    </div>
+    <div class="filtros" role="tablist" aria-label="Filtrar por material">
+      <button type="button" class="filtro activo" data-filtro="todos">Todos</button>
+      <button type="button" class="filtro" data-filtro="pvc">PVC</button>
+      <button type="button" class="filtro" data-filtro="pc">Policarbonato</button>
+      <button type="button" class="filtro" data-filtro="pp">Polipropileno</button>
+    </div>
+  </header>
+  <div class="mosaico">
+    <figure class="pieza" data-material="pvc"><img src="/img/mosaico/pvc-casa.webp" alt="Casa con techo de teja de PVC terracota frente a la montaña" loading="lazy"></figure>
+    <figure class="pieza" data-material="pc"><img src="/img/mosaico/pc-pergola.webp" alt="Pérgola cubierta con policarbonato ondulado transparente" loading="lazy"></figure>
+    <figure class="pieza" data-material="pvc"><img src="/img/mosaico/pvc-cumbrera.webp" alt="Cumbrera y faldones de teja de PVC" loading="lazy"></figure>
+    <figure class="pieza" data-material="pp"><img src="/img/mosaico/pp-mano.webp" alt="Lámina translúcida de polipropileno sobre el césped" loading="lazy"></figure>
+    <figure class="pieza" data-material="pvc"><img src="/img/mosaico/pvc-colores.webp" alt="Láminas de PVC en azul, verde, terracota, rojo y gris" loading="lazy"></figure>
+    <figure class="pieza" data-material="pc"><img src="/img/mosaico/pc-colores.webp" alt="Planchas de policarbonato alveolar en varios colores" loading="lazy"></figure>
+    <figure class="pieza" data-material="pvc"><img src="/img/mosaico/pvc-verde.webp" alt="Techo de teja de PVC verde" loading="lazy"></figure>
+    <figure class="pieza" data-material="pvc"><img src="/img/mosaico/pvc-alero.webp" alt="Alero con teja de PVC naranja y caballete" loading="lazy"></figure>
+    <figure class="pieza" data-material="pp"><img src="/img/mosaico/pp-roja.webp" alt="Lámina ondulada roja de polipropileno" loading="lazy"></figure>
+    <figure class="pieza" data-material="pc"><img src="/img/mosaico/pc-greca.webp" alt="Teja de policarbonato transparente con perfil de greca" loading="lazy"></figure>
+    <figure class="pieza" data-material="pvc"><img src="/img/mosaico/pvc-techo.webp" alt="Techo rojo de teja de PVC con cumbrera" loading="lazy"></figure>
+    <figure class="pieza" data-material="pvc"><img src="/img/mosaico/pvc-despacho.webp" alt="Láminas de PVC cargadas en un camión para el despacho" loading="lazy"></figure>
+    <figure class="pieza" data-material="pvc"><img src="/img/mosaico/pvc-ondas.webp" alt="Láminas onduladas de PVC en rojo, verde y terracota apiladas" loading="lazy"></figure>
+    <figure class="pieza" data-material="pc"><img src="/img/mosaico/pc-alveolar.webp" alt="Plancha de policarbonato alveolar transparente" loading="lazy"></figure>
+    <figure class="pieza" data-material="pvc"><img src="/img/mosaico/pvc-tejado.webp" alt="Tejado de PVC terracota bajo el cielo nublado" loading="lazy"></figure>
+    <figure class="pieza" data-material="pvc"><img src="/img/mosaico/pvc-lamina.webp" alt="Lámina de PVC con perfil de teja colonial" loading="lazy"></figure>
+    <figure class="pieza" data-material="pvc"><img src="/img/mosaico/pvc-ondulada.webp" alt="Láminas onduladas de PVC verde y roja" loading="lazy"></figure>
+    <figure class="pieza" data-material="pvc"><img src="/img/mosaico/pvc-perfil.webp" alt="Lámina de PVC terracota vista de frente" loading="lazy"></figure>
+  </div>
+  <p class="nota">Imágenes de referencia de catálogos; para publicar, se reemplazan por fotos propias.</p>
+</section>
+
+<!-- Visor de la galería: se abre al tocar una foto -->
+<dialog id="visor" aria-label="Imagen ampliada">
+  <img alt="">
+  <p></p>
+  <button type="button" class="visor-cerrar" aria-label="Cerrar">×</button>
+</dialog>
+
+<!-- =========================================================================
+     4. POR QUÉ EMPEZAR POR EL MATERIAL (copiado del primer sitio)
+     main.js sección 2 enciende las palabras una por una al bajar;
+     data-calientes = palabras que quedan en color (separadas por | ).
+     ========================================================================= -->
+<section id="propuesta" class="seccion propuesta">
+  <p class="etiqueta">Por qué empezar por el material</p>
+  <blockquote>
+    <p class="encendido" data-calientes="material|clima,|luz">«Un techo no se cambia cada año. Por eso cada obra merece el material que le corresponde: el que aguanta su clima, deja pasar la luz que necesita y se instala sin sorpresas.»</p>
+  </blockquote>
+</section>
+
+<!-- =========================================================================
+     5. COMPARADOR (inspirado en una tabla de planes)
+     Cabecera con una tarjeta por material y un botón para cotizarlo.
+     Las filas van en GRUPOS que se abren y cierran (<tbody class="grupo">);
+     el botón de cada grupo lo maneja main.js sección 5.
+     Marcas: .si (✓), .no (✕), .medio (—). class="ejemplo" = dato inventado
+     para el ejemplo, se reemplaza con la ficha técnica.
+     ========================================================================= -->
+<section id="comparador" class="seccion">
+  <header class="cabecera">
+    <p class="etiqueta">Comparador</p>
+    <h2 class="titulo">¿Cuál va en <em>tu</em> obra?</h2>
+    <p class="bajada">Del uso al detalle técnico, grupo por grupo. Tocar un grupo para abrirlo o cerrarlo.</p>
+  </header>
+  <div class="tabla-envoltura">
+  <table class="planes">
+    <thead>
+      <tr>
+        <th class="planes-esquina"><span>Comparar</span></th>
+        <th style="--c: var(--pvc)" class="destacado">
+          <span class="plan-sello">Más pedido</span>
+          <span class="plan-nombre">PVC</span>
+          <span class="plan-uso">Casa y local</span>
+          <a href="#cotizar" class="boton boton-plan" data-material="pvc">Cotizar</a>
+        </th>
+        <th style="--c: var(--pc)">
+          <span class="plan-nombre">Policarbonato</span>
+          <span class="plan-uso">Garaje y pérgola</span>
+          <a href="#cotizar" class="boton boton-plan" data-material="pc">Cotizar</a>
+        </th>
+        <th style="--c: var(--pp)">
+          <span class="plan-nombre">Polipropileno</span>
+          <span class="plan-uso">Bodega y ampliación</span>
+          <a href="#cotizar" class="boton boton-plan" data-material="pp">Cotizar</a>
+        </th>
+      </tr>
+    </thead>
+
+    <tbody class="grupo abierto">
+      <tr class="grupo-titulo"><th colspan="4"><button type="button" aria-expanded="true">Uso y aspecto</button></th></tr>
+      <tr><th>Mejor para</th><td>Bodegas, locales y casas</td><td>Garajes, pérgolas y patios</td><td>Viviendas y ampliaciones</td></tr>
+      <tr><th>Aspecto</th><td>Teja colonial</td><td>Lámina translúcida</td><td>Teja con relieve</td></tr>
+      <tr><th>Deja pasar la luz</th><td><span class="no"><svg><use href="#i-x"/></svg>No</span></td><td><span class="si"><svg><use href="#i-check"/></svg>Sí</span></td><td><span class="no"><svg><use href="#i-x"/></svg>No</span></td></tr>
+      <tr><th>Elegir si…</th><td>Hay mucha humedad</td><td>Se necesita claridad</td><td>Se busca apariencia de teja</td></tr>
+    </tbody>
+
+    <tbody class="grupo abierto">
+      <tr class="grupo-titulo"><th colspan="4"><button type="button" aria-expanded="true">Resistencia</button></th></tr>
+      <tr><th>Granizo</th><td><span class="si"><svg><use href="#i-check"/></svg></span></td><td><span class="si"><svg><use href="#i-check"/></svg></span></td><td><span class="si"><svg><use href="#i-check"/></svg></span></td></tr>
+      <tr><th>No se oxida</th><td><span class="si"><svg><use href="#i-check"/></svg></span></td><td><span class="si"><svg><use href="#i-check"/></svg></span></td><td><span class="si"><svg><use href="#i-check"/></svg></span></td></tr>
+      <tr><th>Humedad constante</th><td><span class="si"><svg><use href="#i-check"/></svg></span></td><td><span class="si"><svg><use href="#i-check"/></svg></span></td><td><span class="medio ejemplo"><svg><use href="#i-medio"/></svg>Con ventilación</span></td></tr>
+      <tr><th>Ruido de la lluvia</th><td><span class="si ejemplo"><svg><use href="#i-check"/></svg>Bajo</span></td><td><span class="medio ejemplo"><svg><use href="#i-medio"/></svg>Medio</span></td><td><span class="medio ejemplo"><svg><use href="#i-medio"/></svg>Medio</span></td></tr>
+    </tbody>
+
+    <tbody class="grupo abierto">
+      <tr class="grupo-titulo"><th colspan="4"><button type="button" aria-expanded="true">Instalación</button></th></tr>
+      <tr><th>Liviano</th><td><span class="si"><svg><use href="#i-check"/></svg></span></td><td><span class="si"><svg><use href="#i-check"/></svg></span></td><td><span class="si"><svg><use href="#i-check"/></svg></span></td></tr>
+      <tr><th>Corte con herramienta común</th><td><span class="si"><svg><use href="#i-check"/></svg></span></td><td><span class="si"><svg><use href="#i-check"/></svg></span></td><td><span class="si"><svg><use href="#i-check"/></svg></span></td></tr>
+      <tr><th>Cumbreras y accesorios</th><td><span class="si"><svg><use href="#i-check"/></svg></span></td><td><span class="si"><svg><use href="#i-check"/></svg></span></td><td><span class="si"><svg><use href="#i-check"/></svg></span></td></tr>
+    </tbody>
+
+    <tbody class="grupo">
+      <tr class="grupo-titulo"><th colspan="4"><button type="button" aria-expanded="false">Ficha técnica <small>(datos de ejemplo)</small></button></th></tr>
+      <tr><th>Peso por m²</th><td class="ejemplo">≈ 5 kg</td><td class="ejemplo">≈ 1,5 kg</td><td class="ejemplo">≈ 2 kg</td></tr>
+      <tr><th>Largos de lámina</th><td class="ejemplo">2,90 a 11,80 m</td><td class="ejemplo">2,44 a 6,10 m</td><td class="ejemplo">1,83 a 3,66 m</td></tr>
+      <tr><th>Garantía</th><td class="ejemplo">10 años</td><td class="ejemplo">10 años</td><td class="ejemplo">5 años</td></tr>
+      <tr><th>Precio orientativo</th><td colspan="3" class="pendiente">Pendiente del catálogo</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="nota">Las marcas con borde punteado y la ficha técnica son datos de ejemplo: se reemplazan con la ficha técnica real.</p>
+</section>
+
+<!-- =========================================================================
+     6. ENTREGA EN OBRA: las ciudades como paradas de una línea de ruta.
+     La línea se dibuja al bajar (main.js sección 7).
+     PARA AGREGAR UNA PARADA: copiar un <li> dentro de .ruta.
+     ========================================================================= -->
+<section id="entrega" class="seccion entrega">
+  <header class="cabecera">
+    <p class="etiqueta">Entrega en obra</p>
+    <h2 class="titulo">El camión llega <em>hasta la obra</em></h2>
+    <p class="bajada">Despacho a Quito y sus valles. <span class="pendiente">Días y costo de envío: pendientes.</span></p>
+  </header>
+  <ol class="ruta">
+    <li><span class="parada"></span><b>Quito norte</b></li>
+    <li><span class="parada"></span><b>Quito centro</b></li>
+    <li><span class="parada"></span><b>Quito sur</b></li>
+    <li><span class="parada"></span><b>Cumbayá y Tumbaco</b></li>
+    <li><span class="parada"></span><b>Valle de Los Chillos</b></li>
+    <li><span class="parada"></span><b>Calderón y Carapungo</b></li>
+    <li><span class="parada"></span><b>Pomasqui y San Antonio</b></li>
+    <li><span class="parada"></span><b>Sangolquí</b></li>
+  </ol>
+</section>
+
+<!-- =========================================================================
+     7. OBRAS: rejilla de tarjetas de distintos tamaños.
+     PARA AGREGAR UNA OBRA: copiar un <article class="obra"> y cambiar la foto,
+     el alt, el título y el material.
+     ========================================================================= -->
+<section id="obras" class="seccion">
+  <header class="cabecera">
+    <p class="etiqueta">Obras hechas</p>
+    <h2 class="titulo">Techos que ya están arriba</h2>
+  </header>
+  <div class="obras">
+    <article class="obra obra-alta">
+      <img src="/img/obras/piscina-pc.webp" alt="Cubierta de piscina con policarbonato alveolar" loading="lazy">
+      <div><span class="obra-material" style="--c: var(--pc)">Policarbonato alveolar</span><h3>Cubierta de piscina</h3><p class="pendiente">Ubicación pendiente</p></div>
+    </article>
+    <article class="obra">
+      <img src="/img/obras/patio-pp.webp" alt="Patio cubierto con polipropileno" loading="lazy">
+      <div><span class="obra-material" style="--c: var(--pp)">Polipropileno</span><h3>Patio cubierto</h3><p class="pendiente">Ubicación pendiente</p></div>
+    </article>
+    <article class="obra">
+      <img src="/img/obras/techo-pvc.webp" alt="Techo de teja roja de PVC" loading="lazy">
+      <div><span class="obra-material" style="--c: var(--pvc)">PVC</span><h3>Techo de teja roja</h3><p class="pendiente">Ubicación pendiente</p></div>
+    </article>
+    <article class="obra">
+      <img src="/img/obras/cumbrera-pvc.webp" alt="Cumbrera y faldones de PVC" loading="lazy">
+      <div><span class="obra-material" style="--c: var(--pvc)">PVC</span><h3>Cumbrera y faldones</h3><p class="pendiente">Ubicación pendiente</p></div>
+    </article>
+    <article class="obra">
+      <img src="/img/obras/pergola-pc.webp" alt="Pérgola de policarbonato" loading="lazy">
+      <div><span class="obra-material" style="--c: var(--pc)">Policarbonato</span><h3>Pérgola</h3><p class="pendiente">Ubicación pendiente</p></div>
+    </article>
+    <article class="obra obra-ancha">
+      <img src="/img/obras/corredor-pc.webp" alt="Corredor techado con policarbonato ondulado" loading="lazy">
+      <div><span class="obra-material" style="--c: var(--pc)">Policarbonato ondulado</span><h3>Corredor techado</h3><p class="pendiente">Ubicación pendiente</p></div>
+    </article>
+  </div>
+</section>
+
+<!-- =========================================================================
+     8. COTIZAR
+     a) #calculo: el material se elige con tarjetas (radio name="material",
+        value pvc / pc / pp); largo, ancho y lámina; el resultado sale en
+        <output id="resultado">.
+     b) #contacto: nombre, teléfono y ciudad; el botón presionado (value
+        "wa" o "correo") decide por dónde se envía.
+     ========================================================================= -->
+<section id="cotizar" class="seccion cotizar">
+  <header class="cabecera">
+    <p class="etiqueta">Cotizar</p>
+    <h2 class="titulo">¿Cuánto techo <em>hay que cubrir?</em></h2>
+    <p class="bajada">Elegir el material y las medidas. El cálculo suma 5 % de traslapes y cortes; después, ventas confirma precio y entrega.</p>
+  </header>
+  <div class="cotizar-rejilla">
+    <form id="calculo" class="tarjeta-form">
+      <p class="paso"><span>1</span>Material</p>
+      <div class="opciones">
+        <label class="opcion" style="--c: var(--pvc)"><input type="radio" name="material" value="pvc" data-nombre="PVC" checked><span>PVC</span></label>
+        <label class="opcion" style="--c: var(--pc)"><input type="radio" name="material" value="pc" data-nombre="Policarbonato"><span>Policarbonato</span></label>
+        <label class="opcion" style="--c: var(--pp)"><input type="radio" name="material" value="pp" data-nombre="Polipropileno"><span>Polipropileno</span></label>
+      </div>
+      <p class="paso"><span>2</span>Medidas</p>
+      <div class="medidas">
+        <label>Largo del techo (m)<input id="largo" type="number" min="0" step="0.1" value="8" inputmode="decimal"></label>
+        <label>Ancho del techo (m)<input id="ancho" type="number" min="0" step="0.1" value="6" inputmode="decimal"></label>
+        <label>Largo de lámina (m)<input id="largoLamina" type="number" min="0" step="0.1" value="6" inputmode="decimal"></label>
+      </div>
+      <output id="resultado" for="largo ancho largoLamina"></output>
+    </form>
+
+    <form id="contacto" class="tarjeta-form">
+      <p class="paso"><span>3</span>Enviar el pedido</p>
+      <label>Nombre<input name="nombre" required autocomplete="name"></label>
+      <label>Teléfono<input name="telefono" type="tel" required autocomplete="tel"></label>
+      <label>Ciudad<input name="ciudad" autocomplete="address-level2"></label>
+      <div class="envio">
+        <button class="boton boton-wa" type="submit" value="wa">Enviar por WhatsApp</button>
+        <button class="boton boton-borde" type="submit" value="correo">Enviar por correo</button>
+      </div>
+      <p id="contactoAviso" class="aviso" role="status" hidden></p>
+      <dl class="datos-venta">
+        <div><dt>WhatsApp</dt><dd data-wa-texto></dd></div>
+        <div><dt>Correo</dt><dd data-correo-texto></dd></div>
+        <div><dt>Planta y despacho</dt><dd class="pendiente">Dirección pendiente</dd></div>
+      </dl>
+      <p class="nota pendiente">Número y correo de prueba: falta reemplazarlos por los reales.</p>
+    </form>
+  </div>
+</section>
+
+<!-- =========================================================================
+     9. PREGUNTAS: título fijo a la izquierda y preguntas a la derecha.
+     Cada pregunta es un <details>: <summary> es la pregunta y el <p> la respuesta.
+     ========================================================================= -->
+<section id="preguntas" class="seccion preguntas">
+  <div class="preguntas-lado">
+    <p class="etiqueta">Preguntas</p>
+    <h2 class="titulo">Lo que más <em>se pregunta</em></h2>
+    <p class="bajada">¿Falta una respuesta? Se resuelve por WhatsApp.</p>
+    <a class="boton boton-wa" data-wa href="https://wa.me/" target="_blank" rel="noopener">Preguntar por WhatsApp</a>
+  </div>
+  <div class="faq">
+    <details><summary>¿Qué material conviene para una casa?</summary><p>Polipropileno o PVC con perfil de teja, según el clima y la apariencia buscada. Para dejar pasar la luz, el policarbonato: polipropileno y PVC son opacos.</p></details>
+    <details><summary>¿Qué largo pueden tener las láminas?</summary><p class="pendiente">Largos disponibles: pendientes de la ficha técnica.</p></details>
+    <details><summary>¿Cuántas láminas lleva un techo?</summary><p>Depende del área, la pendiente y el traslape. La sección Cotizar da el área de partida.</p></details>
+    <details><summary>¿Se venden las cumbreras y los accesorios?</summary><p>Sí, para cerrar el techo completo. <span class="pendiente">Colores y medidas: pendientes del catálogo.</span></p></details>
+    <details><summary>¿Dónde se compra?</summary><p>El cotizador de esta página arma el pedido y lo envía por WhatsApp o por correo; ventas confirma precio y entrega. <span class="pendiente">Dirección de la planta: pendiente.</span></p></details>
+    <details><summary>¿Incluye instalación y envío?</summary><p class="pendiente">Condiciones pendientes.</p></details>
+    <details><summary>¿Qué garantía tienen?</summary><p class="pendiente">Pendiente de la ficha técnica.</p></details>
+  </div>
+</section>
+
+</main>
+
+<!-- =========================================================================
+     PIE: logo Truvec grande, menú repetido y datos pendientes.
+     ========================================================================= -->
+<footer class="pie">
+  <div class="pie-fila">
+    <div>
+      <p class="logo logo-grande">Truvec<sub>IFT</sub></p>
+      <p class="pie-frase">Tejas de PVC, policarbonato y polipropileno.</p>
+    </div>
+    <nav class="pie-menu" aria-label="Secciones (pie)">
+      <a href="#materiales">Materiales</a>
+      <a href="#lamina">3D</a>
+      <a href="#mosaico">Galería</a>
+      <a href="#comparador">Comparador</a>
+      <a href="#entrega">Entrega</a>
+      <a href="#obras">Obras</a>
+      <a href="#preguntas">Preguntas</a>
+      <a href="#cotizar">Cotizar</a>
+    </nav>
+  </div>
+  <p class="pie-gigante" id="gigante" aria-hidden="true">TRUVEC</p>
+  <p class="nota pendiente">Dirección, horarios y redes sociales: pendientes.</p>
+</footer>
+
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>

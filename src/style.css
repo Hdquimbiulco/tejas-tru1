@@ -1,0 +1,468 @@
+/* =============================================================================
+   ESTILOS DEL SEGUNDO SITIO DE TEJAS (TRUVEC) — versión «mosaico»
+   -----------------------------------------------------------------------------
+   Tema: fondo oscuro de día de lluvia, letra grande y un color por material.
+   Orden del archivo (el mismo de la página):
+     1. Variables             6. Mosaico y visor        11. Preguntas
+     2. Base                  7. Propuesta              12. Pie
+     3. Carga                 8. Comparador             13. Celular
+     4. Barra, WhatsApp       9. Entrega en obra        14. Movimiento reducido
+     5. Portada y materiales 10. Obras y cotizar
+   clamp(MÍN, IDEAL, MÁX) = tamaño que crece con la pantalla sin pasarse.
+   ============================================================================= */
+
+/* 1. VARIABLES -------------------------------------------------------------- */
+:root {
+  --fondo: #0f1316;        /* gris pizarra: fondo general */
+  --superficie: #181e23;   /* tarjetas sobre el fondo oscuro */
+  --linea: rgba(255, 255, 255, .12);
+  --texto: #f4f1ea;        /* blanco cálido */
+  --suave: #b9c0c5;        /* textos secundarios */
+  --claro: #f3efe8;        /* fondo de las secciones claras */
+  --tinta: #13171a;        /* texto sobre fondo claro */
+  --acento: #ff6a3d;       /* terracota vivo: botones y palabras resaltadas */
+  --pvc: #ff6a3d;          /* color de cada material */
+  --pc: #5fd0f5;
+  --pp: #ffc14a;
+  --wa: #25d366;
+  --pendiente: #f0c674;    /* datos que faltan, sobre oscuro */
+  --gutter: clamp(16px, 5vw, 80px);
+  --radio: 22px;
+  --titulos: "Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif;
+}
+
+/* 2. BASE ------------------------------------------------------------------- */
+* { box-sizing: border-box; }
+html { background: var(--fondo); scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+html.cargando, html.cargando body { overflow: hidden; }
+body {
+  margin: 0;
+  color: var(--texto);
+  background: var(--fondo);
+  font: 400 19px/1.55 "Manrope", "Helvetica Neue", Arial, sans-serif;   /* letra base 19 px */
+  overflow-x: clip;
+}
+h1, h2, h3 { font-family: var(--titulos); font-weight: 800; letter-spacing: -.02em; line-height: 1.02; margin: 0; }
+img, video, canvas { display: block; max-width: 100%; }
+a { color: inherit; }
+section { scroll-margin-top: 96px; }
+.oculto { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.pendiente { color: var(--pendiente); font-style: italic; }
+
+/* Logo: Truvec con IFT en subíndice */
+.logo { font-family: var(--titulos); font-weight: 800; font-size: clamp(22px, 1.8vw, 28px); letter-spacing: -.02em; text-decoration: none; margin: 0; }
+.logo sub { font-family: "Manrope", sans-serif; font-size: 12px; font-weight: 800; letter-spacing: .14em; margin-left: 4px; color: var(--acento); vertical-align: baseline; }
+.logo-grande { font-size: clamp(56px, 9vw, 120px); line-height: 1; }
+.logo-grande sub { font-size: clamp(14px, 1.4vw, 20px); }
+
+/* Secciones y cabeceras comunes */
+.seccion { padding: clamp(80px, 12vh, 150px) var(--gutter); }
+.seccion-clara { background: var(--claro); color: var(--tinta); }
+.cabecera { max-width: 980px; margin-bottom: clamp(36px, 6vh, 64px); }
+.cabecera-fila { max-width: none; display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 24px; }
+.etiqueta {
+  display: inline-flex; align-items: center; gap: 10px;
+  margin: 0 0 18px; font-size: 16px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--acento);
+}
+.etiqueta::before { content: ""; width: 28px; height: 2px; background: currentColor; }
+.titulo { font-size: clamp(44px, 6.4vw, 96px); }
+.titulo em { font-style: normal; color: var(--acento); }
+.bajada { margin: 22px 0 0; font-size: clamp(20px, 1.7vw, 25px); color: var(--suave); max-width: 760px; }
+.seccion-clara .bajada { color: #4a4f53; }
+.nota { margin: 28px 0 0; font-size: 17px; color: var(--suave); }
+.seccion-clara .nota { color: #5a5f63; }
+
+/* Botones */
+.boton {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 16px 28px; border: 0; border-radius: 999px; cursor: pointer;
+  font: 800 clamp(17px, 1.3vw, 20px)/1 "Manrope", sans-serif; text-decoration: none;
+  background: var(--acento); color: #fff;
+  transition: transform .2s, background .2s, box-shadow .2s;
+}
+.boton:hover { transform: translateY(-2px); box-shadow: 0 12px 28px -10px rgba(255, 106, 61, .7); }
+.boton-claro { background: #fff; color: var(--tinta); }
+.boton-wa { background: var(--wa); color: #06210f; }
+.boton-borde { background: transparent; color: inherit; box-shadow: inset 0 0 0 2px currentColor; }
+.boton-borde:hover { box-shadow: inset 0 0 0 2px currentColor; }
+
+/* 3. CARGA ------------------------------------------------------------------ */
+#carga { position: fixed; inset: 0; z-index: 60; background: var(--fondo); display: grid; place-content: center; justify-items: center; gap: 12px; }
+.carga-pct { margin: 0; font-size: 24px; font-weight: 800; color: var(--suave); font-variant-numeric: tabular-nums; }
+.carga-linea { width: min(320px, 70vw); height: 3px; background: var(--linea); border-radius: 3px; overflow: hidden; }
+.carga-linea span { display: block; height: 100%; background: var(--pc); transform: scaleX(0); transform-origin: left; }
+
+/* 4. BARRA SUPERIOR (cápsula flotante), WHATSAPP Y AVANCE ------------------- */
+.barra {
+  position: fixed; z-index: 40; top: 16px; left: 50%; translate: -50% 0;
+  width: min(1240px, calc(100% - 32px));
+  display: flex; align-items: center; gap: 20px;
+  padding: 10px 10px 10px 28px;
+  border-radius: 999px;
+  background: rgba(15, 19, 22, .93);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  box-shadow: inset 0 0 0 1px var(--linea), 0 16px 40px -20px rgba(0, 0, 0, .6);
+}
+.menu { display: flex; gap: 4px; margin-left: auto; }
+.menu a {
+  padding: 10px 16px; border-radius: 999px; text-decoration: none;
+  font-size: clamp(16px, 1.25vw, 19px); font-weight: 600; color: var(--suave);
+  transition: background .2s, color .2s;
+}
+.menu a:hover { background: rgba(255, 255, 255, .08); color: var(--texto); }
+.boton-cotizar { padding: 14px 26px; }
+.menu-boton { display: none; }
+
+.wa {
+  position: fixed; z-index: 40; right: 22px; bottom: 22px;
+  display: flex; align-items: center; gap: 0; text-decoration: none;
+}
+.wa-texto {
+  padding: 14px 22px 14px 24px; margin-right: -18px; border-radius: 999px 0 0 999px;
+  background: #fff; color: var(--tinta); font-weight: 800; font-size: 18px;
+  box-shadow: 0 10px 30px -12px rgba(0, 0, 0, .5);
+}
+.wa-icono {
+  position: relative; display: grid; place-items: center; width: 68px; height: 68px; border-radius: 22px;
+  background: var(--wa); color: #fff; box-shadow: 0 14px 30px -10px rgba(37, 211, 102, .8);
+  transition: transform .2s;
+}
+.wa-icono::after { content: ""; position: absolute; inset: -6px; border-radius: 26px; border: 2px solid var(--wa); opacity: 0; animation: latido 2.4s infinite; }
+.wa-icono svg { width: 36px; height: 36px; }
+.wa:hover .wa-icono { transform: rotate(-8deg) scale(1.06); }
+@keyframes latido { 0% { opacity: .8; transform: scale(.9); } 100% { opacity: 0; transform: scale(1.25); } }
+
+.avance { position: fixed; z-index: 45; top: 0; left: 0; right: 0; height: 3px; }
+.avance span { display: block; height: 100%; background: linear-gradient(90deg, var(--pc), var(--acento)); transform: scaleX(0); transform-origin: left; }
+
+/* 5. PORTADA (fotogramas con lluvia) ---------------------------------------- */
+.escena { position: relative; height: 100vh; height: 100svh; overflow: hidden; background: #000; }
+.escena > canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+/* Velo: oscurece abajo y a la izquierda para que se lea el texto blanco */
+.velo {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(0deg, rgba(8, 11, 13, .85), rgba(8, 11, 13, .2) 45%, rgba(8, 11, 13, .35)),
+    linear-gradient(90deg, rgba(8, 11, 13, .55), transparent 60%);
+}
+.cap { position: absolute; left: var(--gutter); right: var(--gutter); color: #fff; }
+.cap-inicio { bottom: 12vh; }
+.cap-inicio h1 { font-size: clamp(72px, 13vw, 210px); line-height: .9; padding-bottom: .08em; }
+.cap-texto { margin: 14px 0 0; font-size: clamp(22px, 2.2vw, 34px); font-weight: 600; max-width: 640px; }
+.cap .etiqueta { color: #ffd2c2; }
+.indicacion { display: flex; align-items: center; gap: 12px; margin: 34px 0 0; font-size: 18px; color: #dfe6ea; }
+.indicacion span { width: 2px; height: 34px; background: linear-gradient(#fff, transparent); animation: bajar 1.6s infinite; }
+@keyframes bajar { 0% { transform: scaleY(0); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; } 51% { transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
+.cap-lado { bottom: 12vh; max-width: 720px; }
+.cap-der { left: auto; text-align: right; }
+.cap-der .cap-texto { margin-left: auto; }
+.cap-lado h2 { font-size: clamp(48px, 7vw, 108px); }
+.cap-num { margin: 0 0 10px; font-family: var(--titulos); font-size: 22px; font-weight: 800; color: var(--pc); }
+.cap .boton { margin-top: 28px; }
+
+/* 5b. MATERIALES: tres columnas con cuadritos -------------------------------- */
+.materiales-rejilla { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(20px, 2vw, 32px); }
+.material {
+  display: flex; flex-direction: column;
+  padding: 16px 16px 28px; border-radius: var(--radio);
+  background: var(--superficie); box-shadow: inset 0 0 0 1px var(--linea);
+}
+.material-foto { margin: 0 0 22px; aspect-ratio: 4 / 3; border-radius: calc(var(--radio) - 8px); overflow: hidden; }
+.material-foto img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s; }
+.material:hover .material-foto img { transform: scale(1.05); }
+.material-chip { align-self: flex-start; margin: 0 8px 12px; padding: 6px 14px; border-radius: 999px; font-size: 16px; font-weight: 800; color: var(--tinta); background: var(--c); }
+.material h3 { margin: 0 8px; font-size: clamp(38px, 3.4vw, 54px); }
+.material-frase { margin: 6px 8px 22px; font-size: clamp(20px, 1.6vw, 24px); color: var(--suave); }
+.rasgos { list-style: none; margin: 0 0 26px; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.rasgo {
+  display: grid; gap: 6px; align-content: start;
+  padding: 18px; border-radius: 16px;
+  background: rgba(255, 255, 255, .04); box-shadow: inset 0 0 0 1px var(--linea);
+}
+.rasgo svg { width: 34px; height: 34px; fill: none; stroke: var(--c); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; margin-bottom: 4px; }
+.rasgo b { font-size: clamp(19px, 1.4vw, 22px); line-height: 1.2; }
+.rasgo span { font-size: clamp(17px, 1.2vw, 19px); line-height: 1.4; color: var(--suave); }
+.enlace {
+  margin: auto 8px 0; align-self: flex-start;
+  display: inline-flex; gap: 10px; align-items: center;
+  padding: 15px 26px; border-radius: 999px; text-decoration: none;
+  font-weight: 800; font-size: clamp(17px, 1.3vw, 20px);
+  color: var(--tinta); background: var(--c); transition: transform .2s;
+}
+.enlace:hover { transform: translateY(-2px); }
+.enlace span { transition: transform .2s; }
+.enlace:hover span { transform: translateX(4px); }
+
+/* 6. MOSAICO (masonry con columnas) Y VISOR --------------------------------- */
+.filtros { display: flex; flex-wrap: wrap; gap: 8px; padding: 6px; border-radius: 999px; background: #e4ddd2; }
+.filtro {
+  padding: 12px 22px; border: 0; border-radius: 999px; cursor: pointer;
+  font: 800 clamp(16px, 1.25vw, 19px)/1 "Manrope", sans-serif; color: #3d4246; background: transparent;
+  transition: background .2s, color .2s;
+}
+.filtro:hover { color: var(--tinta); }
+.filtro.activo { background: var(--tinta); color: #fff; }
+/* columns: las fotos se acomodan en 4 columnas, cada una a su altura (masonry) */
+.mosaico { columns: 4 260px; column-gap: 16px; }
+.pieza { break-inside: avoid; margin: 0 0 16px; border-radius: 16px; overflow: hidden; cursor: zoom-in; background: #fff; position: relative; }
+.pieza img { width: 100%; height: auto; transition: transform .5s, filter .5s; }
+.pieza:hover img { transform: scale(1.04); }
+.pieza.oculta { display: none; }
+
+#visor { max-width: min(1100px, 92vw); max-height: 92vh; padding: 0; border: 0; border-radius: var(--radio); background: var(--superficie); color: var(--texto); overflow: hidden; }
+#visor::backdrop { background: rgba(5, 8, 10, .82); backdrop-filter: blur(6px); }
+#visor img { max-height: 80vh; width: auto; margin: 0 auto; }
+#visor p { margin: 0; padding: 16px 24px 20px; font-size: 19px; }
+.visor-cerrar { position: absolute; top: 12px; right: 12px; width: 48px; height: 48px; border: 0; border-radius: 50%; cursor: pointer; font-size: 30px; line-height: 1; background: rgba(0, 0, 0, .6); color: #fff; }
+
+/* 7. PROPUESTA (palabras que se encienden) ---------------------------------- */
+.propuesta { text-align: center; padding-block: clamp(110px, 18vh, 200px); }
+.propuesta .etiqueta::after { content: ""; width: 28px; height: 2px; background: currentColor; }
+.propuesta blockquote { margin: 0 auto; max-width: 1180px; }
+.encendido { margin: 0; font-family: var(--titulos); font-weight: 800; font-size: clamp(34px, 4.6vw, 72px); line-height: 1.12; letter-spacing: -.02em; }
+.caliente { color: var(--acento); }
+
+/* 8. COMPARADOR (tabla de planes) ------------------------------------------- */
+.tabla-envoltura { overflow-x: auto; border-radius: var(--radio); }
+.planes { width: 100%; min-width: 820px; border-collapse: separate; border-spacing: 0; font-size: clamp(18px, 1.45vw, 22px); }
+.planes th, .planes td { padding: 18px 20px; text-align: center; border-bottom: 1px solid var(--linea); }
+.planes tbody th { text-align: left; font-weight: 600; color: var(--suave); width: 26%; }
+.planes thead th { vertical-align: bottom; padding: 26px 20px; border-bottom: 0; background: var(--superficie); position: relative; }
+.planes thead th:first-child { border-radius: var(--radio) 0 0 0; text-align: left; }
+.planes thead th:last-child { border-radius: 0 var(--radio) 0 0; }
+.planes-esquina span { font-family: var(--titulos); font-size: clamp(26px, 2.4vw, 36px); }
+.plan-nombre { display: block; font-family: var(--titulos); font-weight: 800; font-size: clamp(26px, 2.4vw, 36px); color: var(--c); }
+.plan-uso { display: block; margin: 4px 0 16px; font-size: 17px; font-weight: 600; color: var(--suave); }
+.plan-sello { position: absolute; top: 12px; left: 50%; translate: -50% 0; padding: 4px 12px; border-radius: 999px; font-size: 14px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; background: var(--c); color: var(--tinta); }
+.planes .destacado { box-shadow: inset 0 3px 0 var(--c); padding-top: 52px; }
+.boton-plan { padding: 12px 22px; font-size: 17px; background: var(--c); color: var(--tinta); }
+.planes tbody td { background: rgba(255, 255, 255, .02); }
+.planes tbody td:nth-child(2) { background: rgba(255, 106, 61, .06); }   /* columna destacada (PVC) */
+/* Título de cada grupo: botón que abre y cierra */
+.grupo-titulo th { padding: 0; background: var(--fondo); }
+.grupo-titulo button {
+  width: 100%; display: flex; align-items: center; gap: 14px; padding: 22px 20px 14px; border: 0; cursor: pointer;
+  background: none; color: var(--texto); text-align: left;
+  font: 800 clamp(20px, 1.7vw, 25px)/1.2 "Manrope", sans-serif;
+}
+.grupo-titulo button small { font-size: .75em; font-weight: 600; color: var(--pendiente); }
+.grupo-titulo button::before { content: "–"; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: rgba(255, 255, 255, .1); font-size: 22px; }
+.grupo:not(.abierto) .grupo-titulo button::before { content: "+"; }
+.grupo:not(.abierto) tr:not(.grupo-titulo) { display: none; }
+/* Marcas ✓, ✕ y — */
+.si, .no, .medio { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; }
+.si svg, .no svg, .medio svg { width: 30px; height: 30px; padding: 5px; border-radius: 50%; fill: none; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.si svg { background: rgba(37, 211, 102, .16); stroke: #4ade80; }
+.no svg { background: rgba(255, 255, 255, .08); stroke: #8b949a; }
+.no { color: var(--suave); }
+.medio svg { background: rgba(255, 193, 74, .14); stroke: var(--pp); }
+/* Datos de ejemplo: borde punteado */
+.ejemplo { outline: 2px dashed rgba(240, 198, 116, .55); outline-offset: -8px; border-radius: 12px; }
+span.ejemplo { padding: 6px 12px 6px 6px; outline-offset: 0; }
+
+/* 9. ENTREGA EN OBRA (línea de ruta) ---------------------------------------- */
+.entrega { background: linear-gradient(180deg, var(--fondo), #121a1f); }
+.ruta { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); row-gap: 64px; }
+.ruta li { position: relative; padding-right: 20px; }
+/* Cada parada lleva su tramo de línea: gris de fondo (::before) y de color encima (::after).
+   Cuando la ruta entra en pantalla, main.js le pone la clase "activa" y los tramos se
+   llenan uno tras otro (el retraso sale de --i, el número de parada). */
+.ruta li::before, .ruta li::after { content: ""; position: absolute; left: 0; right: 0; top: 13px; height: 4px; background: var(--linea); }
+.ruta li::after { background: linear-gradient(90deg, var(--pc), var(--acento)); transform: scaleX(0); transform-origin: left; transition: transform .5s ease calc(var(--i, 0) * 140ms); }
+.ruta.activa li::after { transform: scaleX(1); }
+.parada { position: relative; z-index: 1; display: block; width: 30px; height: 30px; margin-bottom: 18px; border-radius: 50%; background: var(--fondo); border: 4px solid #3a444b; transition: border-color .3s calc(var(--i, 0) * 140ms), background .3s calc(var(--i, 0) * 140ms); }
+.ruta.activa .parada { border-color: var(--acento); background: #2a1810; }
+.ruta b { display: block; font-family: var(--titulos); font-size: clamp(24px, 2.2vw, 34px); line-height: 1.1; }
+
+/* 10. OBRAS (rejilla de tamaños distintos) ---------------------------------- */
+.obras { display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: clamp(240px, 26vw, 360px); gap: 16px; }
+.obra { position: relative; margin: 0; border-radius: var(--radio); overflow: hidden; }
+.obra-alta { grid-row: span 2; }
+.obra-ancha { grid-column: span 2; }
+.obra img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .7s; }
+.obra:hover img { transform: scale(1.06); }
+.obra > div { position: absolute; inset: auto 0 0 0; padding: 60px 24px 22px; background: linear-gradient(0deg, rgba(8, 11, 13, .9), transparent); }
+.obra-material { display: inline-block; padding: 5px 12px; border-radius: 999px; font-size: 15px; font-weight: 800; color: var(--tinta); background: var(--c); }
+.obra h3 { margin: 10px 0 4px; font-size: clamp(26px, 2.2vw, 34px); }
+.obra p { margin: 0; font-size: clamp(17px, 1.3vw, 20px); }
+
+/* 10b. COTIZAR -------------------------------------------------------------- */
+.cotizar { background: var(--claro); color: var(--tinta); }
+.cotizar .bajada { color: #4a4f53; }
+.cotizar .pendiente { color: #8a5b00; }
+.cotizar-rejilla { display: grid; grid-template-columns: 1.15fr 1fr; gap: 24px; align-items: start; }
+.tarjeta-form { display: grid; gap: 18px; padding: clamp(24px, 3vw, 44px); border-radius: var(--radio); background: #fff; box-shadow: 0 30px 60px -40px rgba(0, 0, 0, .35); }
+.paso { display: flex; align-items: center; gap: 14px; margin: 6px 0 0; font-family: var(--titulos); font-weight: 800; font-size: clamp(26px, 2.2vw, 34px); }
+.paso span { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: var(--tinta); color: #fff; font-size: 20px; }
+.opciones { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.opcion { position: relative; cursor: pointer; }
+.opcion input { position: absolute; opacity: 0; }
+.opcion span {
+  display: block; padding: 22px 14px; border-radius: 16px; text-align: center;
+  font-weight: 800; font-size: clamp(18px, 1.4vw, 22px);
+  box-shadow: inset 0 0 0 2px #e2ddd5; transition: background .2s, box-shadow .2s;
+}
+.opcion span::before { content: ""; display: block; width: 18px; height: 18px; margin: 0 auto 10px; border-radius: 50%; background: var(--c); }
+.opcion input:checked + span { background: color-mix(in srgb, var(--c) 18%, #fff); box-shadow: inset 0 0 0 3px var(--c); }
+.opcion input:focus-visible + span { outline: 3px solid var(--tinta); outline-offset: 2px; }
+.medidas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.tarjeta-form label { display: grid; gap: 8px; font-size: clamp(18px, 1.3vw, 21px); font-weight: 600; }
+.tarjeta-form input:not([type="radio"]) {
+  width: 100%; padding: 16px 18px; border: 0; border-radius: 14px;
+  font: 600 22px/1.2 "Manrope", sans-serif; color: var(--tinta);
+  background: #f2eee7; box-shadow: inset 0 0 0 2px transparent; transition: box-shadow .2s;
+}
+.tarjeta-form input:focus { outline: 0; box-shadow: inset 0 0 0 2px var(--acento); }
+#resultado { display: grid; gap: 6px; margin-top: 8px; padding: 24px 26px; border-radius: 18px; background: var(--tinta); color: #fff; }
+#resultado strong { font-family: var(--titulos); font-size: clamp(48px, 5vw, 72px); line-height: 1; }
+#resultado em { font-style: normal; font-size: 20px; color: #d5dadd; }
+#resultado span { font-size: 18px; color: var(--pendiente); font-style: italic; }
+.envio { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
+.envio .boton { font-size: 20px; }
+.aviso { margin: 0; font-size: 19px; font-weight: 600; color: #136c3a; }
+.datos-venta { margin: 6px 0 0; display: grid; gap: 10px; font-size: 20px; }
+.datos-venta div { display: flex; justify-content: space-between; gap: 16px; padding-top: 10px; border-top: 1px solid #e7e2da; }
+.datos-venta dt { color: #5a5f63; }
+.datos-venta dd { margin: 0; font-weight: 800; text-align: right; }
+
+/* 11. PREGUNTAS ------------------------------------------------------------- */
+.preguntas { display: grid; grid-template-columns: .9fr 1.1fr; gap: clamp(32px, 6vw, 100px); align-items: start; }
+.preguntas-lado { position: sticky; top: 120px; }
+.preguntas-lado .boton { margin-top: 30px; }
+.faq details { border-bottom: 1px solid var(--linea); }
+.faq summary {
+  display: flex; justify-content: space-between; align-items: center; gap: 20px;
+  padding: 26px 0; cursor: pointer; list-style: none;
+  font-family: var(--titulos); font-weight: 800; font-size: clamp(23px, 2vw, 31px); line-height: 1.2;
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after {
+  content: "+"; flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%;
+  font-family: "Manrope", sans-serif; font-size: 28px; font-weight: 400;
+  background: rgba(255, 255, 255, .08); transition: transform .3s, background .3s;
+}
+.faq details[open] summary::after { transform: rotate(45deg); background: var(--acento); }
+.faq details p { margin: 0 0 28px; max-width: 680px; font-size: clamp(19px, 1.5vw, 23px); color: var(--suave); }
+.faq details p.pendiente { color: var(--pendiente); }
+
+/* 12. PIE ------------------------------------------------------------------- */
+.pie { padding: clamp(70px, 10vh, 120px) var(--gutter) 40px; border-top: 1px solid var(--linea); overflow: hidden; }
+.pie-fila { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 40px; }
+.pie-frase { margin: 12px 0 0; font-size: 21px; color: var(--suave); }
+.pie-menu { display: grid; grid-template-columns: repeat(2, auto); gap: 10px 48px; }
+.pie-menu a { font-size: 21px; font-weight: 600; text-decoration: none; color: var(--suave); }
+.pie-menu a:hover { color: var(--texto); }
+/* Palabra gigante con borde y sin relleno; main.js la desliza al bajar */
+.pie-gigante {
+  margin: clamp(40px, 6vh, 80px) 0 0; white-space: nowrap;
+  font-family: var(--titulos); font-weight: 800; font-size: 26vw; line-height: .85; letter-spacing: -.03em;
+  /* Relleno con degradado terracota que se desvanece hacia abajo */
+  background: linear-gradient(180deg, rgba(255, 106, 61, .5), rgba(255, 106, 61, 0) 90%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+/* 12b. LÁMINAS EN 3D (#lamina) ----------------------------------------
+   La sección ocupa una pantalla y main.js la deja fija (pin) mientras se baja.
+   El canvas cubre toda la sección; el texto va encima, a la izquierda. */
+.lamina { position: relative; height: 100vh; height: 100svh; overflow: hidden;
+  background: radial-gradient(ellipse at 65% 55%, #26303a 0%, var(--fondo) 70%); }
+.lamina > canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+/* Velo oscuro detrás del texto: de cerca, la lámina ocupa toda la pantalla y sin
+   este velo el texto quedaba encima de las ondas y no se leía. */
+.lamina::before { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(90deg, rgba(15,19,22,.94) 0%, rgba(15,19,22,.8) 28%, rgba(15,19,22,0) 50%); }
+.lamina-texto { position: relative; z-index: 1; display: flex; flex-direction: column; justify-content: center;
+  height: 100%; max-width: 520px; padding: 110px 0 40px var(--gutter); pointer-events: none; }
+.lamina-texto .titulo { font-size: clamp(42px, 5vw, 76px); }
+.acabados { margin-top: 26px; }
+.acabados-nombre { margin: 16px 0 8px; font-size: 15px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--suave); }
+.colores { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
+.colores li { display: flex; align-items: center; gap: 8px; padding: 8px 14px 8px 8px; border-radius: 999px;
+  font-size: 17px; font-weight: 800; color: var(--suave); background: rgba(255, 255, 255, .06); transition: background .3s, color .3s; }
+.colores span { width: 22px; height: 22px; border-radius: 50%; background: var(--muestra); }
+.colores li.activo { color: var(--tinta); background: #fff; }
+/* Los 4 detalles ocupan el mismo lugar; main.js muestra uno por tramo */
+.detalles { display: grid; margin-top: 34px; }
+.detalle { grid-area: 1 / 1; margin: 0; display: flex; gap: 16px; align-items: baseline;
+  font-family: var(--titulos); font-weight: 800; font-size: clamp(26px, 2.4vw, 36px); line-height: 1.15; }
+.detalle b { font-size: 20px; color: var(--pc); }
+.lamina .nota { margin-top: 30px; }
+
+/* 13. PANTALLAS MEDIANAS Y CELULAR ------------------------------------------ */
+@media (max-width: 1100px) {
+  .materiales-rejilla { grid-template-columns: 1fr; max-width: 680px; margin: 0 auto; }
+  .menu a { padding: 10px 10px; }
+}
+@media (max-width: 900px) {
+  /* Menú: se esconde y se abre con el botón de tres rayas */
+  .barra { padding-left: 22px; gap: 10px; }
+  .menu {
+    position: absolute; top: calc(100% + 10px); left: 0; right: 0;
+    flex-direction: column; padding: 12px; border-radius: 24px;
+    background: rgba(15, 19, 22, .96); box-shadow: inset 0 0 0 1px var(--linea);
+    display: none;
+  }
+  .barra.abierta .menu { display: flex; }
+  .menu a { font-size: 21px; padding: 14px 18px; }
+  .boton-cotizar { margin-left: auto; padding: 12px 20px; }
+  .menu-boton { display: grid; gap: 6px; place-content: center; width: 48px; height: 48px; border: 0; border-radius: 50%; background: rgba(255, 255, 255, .1); cursor: pointer; }
+  .menu-boton > span:not(.oculto) { width: 20px; height: 2px; background: #fff; }
+  .cotizar-rejilla, .preguntas { grid-template-columns: 1fr; }
+  .preguntas-lado { position: static; }
+  .ruta { grid-template-columns: repeat(2, 1fr); }
+  .obras { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  /* Lámina 3D: el texto baja y el modelo queda arriba */
+  .lamina::before { background: linear-gradient(0deg, rgba(15,19,22,.95) 0%, rgba(15,19,22,.85) 45%, rgba(15,19,22,0) 62%); }
+  .lamina-texto { justify-content: flex-end; padding: 0 var(--gutter) 34px; max-width: none; }
+  .lamina-texto .titulo { font-size: 38px; }
+  .colores { gap: 6px; }
+  .colores li { font-size: 14px; padding: 4px 10px 4px 4px; gap: 6px; }
+  .colores span { width: 18px; height: 18px; }
+  /* Con dos grupos de acabados el texto crecía y tapaba la lámina: se compacta */
+  /* Con tres materiales, en celular todas las pastillas van en un solo bloque
+     y sin los rótulos PVC / Policarbonato / Polipropileno */
+  .acabados { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .acabados-nombre { display: none; }
+  .acabados .colores { display: contents; }
+  .lamina .nota { display: none; }
+  .lamina .detalles { padding-right: 72px; }   /* no queda bajo el botón de WhatsApp */
+  .detalle { font-size: 24px; }
+  body { font-size: 18px; }
+  .wa-texto { display: none; }
+  .wa-icono { width: 60px; height: 60px; }
+  .boton-cotizar span { display: none; }
+  .cap-der { text-align: left; left: var(--gutter); }
+  .cap-der .cap-texto { margin-left: 0; }
+  .rasgos { grid-template-columns: 1fr; }
+  .mosaico { columns: 2; column-gap: 10px; }
+  .pieza { margin-bottom: 10px; }
+  .filtros { border-radius: 20px; }
+  .opciones, .medidas { grid-template-columns: 1fr; }
+  /* Ruta vertical: la línea baja por la izquierda */
+  .ruta { grid-template-columns: 1fr; row-gap: 26px; padding-left: 4px; }
+  .ruta li { display: flex; align-items: center; gap: 18px; }
+  .ruta li::before, .ruta li::after { left: 13px; right: auto; top: 0; bottom: -26px; width: 4px; height: auto; }
+  .ruta li::after { transform: scaleY(0); transform-origin: top; }
+  .ruta.activa li::after { transform: scaleY(1); }
+  .ruta li:last-child::before, .ruta li:last-child::after { display: none; }
+  .parada { margin: 0; flex: none; }
+  .obras { grid-template-columns: 1fr; grid-auto-rows: 300px; }
+  .obra-alta { grid-row: auto; }
+  .obra-ancha { grid-column: auto; }
+  .pie-menu { grid-template-columns: 1fr 1fr; gap: 10px 24px; }
+  /* Comparador: tabla más compacta; se desliza de lado dentro de su caja */
+  .planes { min-width: 660px; font-size: 17px; }
+  .planes th, .planes td { padding: 14px 12px; }
+  .planes tbody th { width: 30%; }
+  .planes .destacado { padding-top: 58px; }
+  .plan-sello { top: 14px; font-size: 12px; white-space: nowrap; }
+  .tabla-envoltura::before { content: "Deslizar la tabla →"; display: block; margin-bottom: 10px; font-size: 16px; color: var(--suave); }
+}
+
+/* 14. MOVIMIENTO REDUCIDO --------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
