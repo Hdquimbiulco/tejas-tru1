@@ -199,25 +199,28 @@
 <!-- =========================================================================
      2b. LÁMINAS EN VIDEO CON SCROLL (fotogramas atados al scroll)
        data-fotogramas="laminas" → carpeta public/frames/laminas/
-       data-total="244"          → cuántos fotogramas hay
-       data-pantallas="6"        → cuánto hay que bajar para recorrerlo
-       data-pantallas-movil="4"  → lo mismo en celular
+       data-total="261"          → cuántos fotogramas hay
+       data-pantallas="6.5"      → cuánto hay que bajar para recorrerlo
+       data-pantallas-movil="4.5" → lo mismo en celular
      La sección queda fija mientras se baja y el scroll elige el fotograma
-     (main.js sección 1b). Los fotogramas salen del video de las láminas
-     (uno de cada dos), sin el final del policarbonato que sólo muestra
-     niebla, sin la repetición del polipropileno y sin la toma final.
+     (main.js sección 1b). Los fotogramas salen de dos videos, uno de cada dos:
+       - f001 a f160: video de las láminas (PVC y policarbonato), sin el final
+         del policarbonato que sólo muestra niebla;
+       - f161 a f166: fundido del policarbonato al polipropileno;
+       - f167 a f261: video del polipropileno (pon-polipropileno.mp4), sin el
+         comienzo y el final casi quietos.
      El menú de la izquierda sigue al scroll: data-desde y data-hasta son los
-     NÚMEROS DE FOTOGRAMA (f001 a f244) en que aparece cada material o color.
+     NÚMEROS DE FOTOGRAMA (f001 a f261) en que aparece cada material o color.
      Al tocar un material o un color, la página baja o sube hasta ese punto.
        - PVC f001 a f078 (rojo 1 a 12; verde 13 a 44; azul 45 a 78)
        - policarbonato f079 a f160
-       - polipropileno f161 a f244
+       - polipropileno f161 a f261
      SI SE CAMBIAN LOS FOTOGRAMAS: actualizar estos números y data-total.
      Los colores sin data-desde (terracota y gris) no salen en el video:
      se muestran como colores disponibles, sin salto.
      Los .detalle-grupo se ven mientras se muestra su material.
      ========================================================================= -->
-<section id="lamina" class="lamina" data-fotogramas="laminas" data-total="244" data-pantallas="6" data-pantallas-movil="4">
+<section id="lamina" class="lamina" data-fotogramas="laminas" data-total="261" data-pantallas="6.5" data-pantallas-movil="4.5">
   <div class="lamina-texto">
     <p class="etiqueta">Láminas en video</p>
     <h2 class="titulo">Cada lámina, <em>de cerca</em></h2>
@@ -238,10 +241,10 @@
           <li style="--muestra: #e8f4f6" data-desde="79" data-hasta="160"><span></span>Cristal</li>
         </ul>
       </div>
-      <div class="acabado" data-material="pp" data-desde="161" data-hasta="244">
+      <div class="acabado" data-material="pp" data-desde="161" data-hasta="261">
         <button type="button" class="acabados-nombre">Polipropileno</button>
         <ul class="colores" aria-label="Acabados de la lámina de polipropileno">
-          <li style="--muestra: #9c3a24" data-desde="161" data-hasta="244"><span></span>Rojo óxido</li>
+          <li style="--muestra: #9c3a24" data-desde="161" data-hasta="261"><span></span>Rojo óxido</li>
         </ul>
       </div>
     </div>
