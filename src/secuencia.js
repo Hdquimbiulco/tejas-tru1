@@ -13,7 +13,9 @@
 // Lo usa main.js, sección 1.
 // =============================================================================
 
-const VENTANA = 24; // fotogramas decodificados hacia cada lado
+// Fotogramas decodificados hacia cada lado del actual. En celular (menos de
+// 768 px) son pocos: cada uno ocupa varios MB de memoria ya descomprimido.
+const VENTANA = innerWidth < 768 ? 6 : 24;
 const SIMULTANEOS = 6; // cuántos fotogramas se preparan a la vez como máximo
 
 /** Descarga los fotogramas; `alCargar` avisa cada uno terminado. */
@@ -96,10 +98,16 @@ export async function crearSecuencia(canvas, blobs) {
   // Ajusta la resolución del canvas al tamaño en pantalla. devicePixelRatio
   // es la densidad de la pantalla (2 en pantallas "retina"); se limita a 1.5
   // para no gastar de más.
+  // En celular, la barra del navegador que aparece y se esconde también avisa
+  // "resize": si el canvas no cambió de tamaño, no se toca (cambiar width o
+  // height borra el dibujo y obliga a redibujar).
   function ajustarTamano() {
     const dpr = Math.min(devicePixelRatio, 1.5);
-    canvas.width = canvas.clientWidth * dpr;
-    canvas.height = canvas.clientHeight * dpr;
+    const ancho = Math.round(canvas.clientWidth * dpr);
+    const alto = Math.round(canvas.clientHeight * dpr);
+    if (ancho === canvas.width && alto === canvas.height) return;
+    canvas.width = ancho;
+    canvas.height = alto;
     ctx.imageSmoothingQuality = 'high';
     dibujado = -1;
     dibujar();

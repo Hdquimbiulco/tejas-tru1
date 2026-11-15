@@ -66,9 +66,11 @@ escenas.forEach((escena, i) => {
     scrollTrigger: {
       trigger: escena,
       start: 'top top',
-      end: `+=${escena.dataset.pantallas * 100}%`,
+      // data-pantallas pantallas de scroll (data-pantallas-movil en celular)
+      end: `+=${(celular ? escena.dataset.pantallasMovil : escena.dataset.pantallas) * 100}%`,
       pin: true,
-      scrub: 0.35,
+      // computadora: sigue al scroll con 0.35 s de suavizado; celular: sigue al dedo sin retraso
+      scrub: celular ? true : 0.35,
       onToggle: ({ isActive }) => { if (!isActive) secuencia.liberar(); },
     },
   });

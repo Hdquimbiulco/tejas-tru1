@@ -524,13 +524,48 @@ button.mapa-ruta-paso { cursor: pointer; text-decoration: underline; text-underl
   .ruta li:last-child::before, .ruta li:last-child::after { display: none; }
   .parada { margin: 0; flex: none; }
   .pie-menu { grid-template-columns: 1fr 1fr; gap: 10px 24px; }
-  /* Comparador: tabla más compacta; se desliza de lado dentro de su caja */
-  .planes { min-width: 660px; font-size: 17px; }
-  .planes th, .planes td { padding: 14px 12px; }
-  .planes tbody th { width: 30%; }
-  .planes .destacado { padding-top: 58px; }
-  .plan-sello { top: 14px; font-size: 12px; white-space: nowrap; }
-  .tabla-envoltura::before { content: "Deslizar la tabla →"; display: block; margin-bottom: 10px; font-size: 16px; color: var(--suave); }
+}
+
+/* Hasta 900 px (tablet y celular): COMPARADOR APILADO. Las cuatro columnas no
+   caben y la tabla tenía que deslizarse de lado.
+   - Arriba, una franja por material: nombre, uso y botón Cotizar.
+   - Cada característica ("Mejor para", "Granizo"...) pasa a ser un bloque: el
+     título arriba y debajo una línea por material, con su nombre en un
+     recuadro de su color. Los nombres salen del CSS (td::before), en el mismo
+     orden que las columnas del HTML: 1.ª PVC, 2.ª Policarbonato, 3.ª Polipropileno.
+   - Los grupos se siguen abriendo y cerrando igual. */
+@media (max-width: 900px) {
+  .tabla-envoltura { overflow: visible; }
+  .planes, .planes thead, .planes tbody, .planes tr, .planes th, .planes td { display: block; }
+  .planes { min-width: 0; font-size: 17px; }
+  /* Franjas de los materiales */
+  .planes thead tr { display: grid; gap: 8px; margin-bottom: 8px; }
+  .planes thead th, .planes thead th:first-child, .planes thead th:last-child {
+    display: grid; grid-template-columns: 1fr auto; align-items: center; column-gap: 12px;
+    padding: 14px 16px; border-radius: 14px; text-align: left; box-shadow: inset 4px 0 0 var(--c); }
+  .planes thead .destacado { padding-top: 14px; box-shadow: inset 4px 0 0 var(--c); }
+  .planes thead th.planes-esquina { display: none; }   /* va después: si no, display: grid gana */
+  .plan-nombre { grid-column: 1; font-size: 22px; }
+  .plan-uso { grid-column: 1; margin: 2px 0 0; font-size: 15px; }
+  .plan-sello { position: static; translate: none; grid-column: 1; justify-self: start; margin-bottom: 6px; font-size: 11px; }
+  .boton-plan { grid-column: 2; grid-row: 1 / span 3; padding: 10px 16px; font-size: 15px; }
+  /* Grupos y características */
+  .planes th, .planes td { border-bottom: 0; }
+  .grupo-titulo button { padding: 22px 4px 10px; }
+  .planes tbody tr:not(.grupo-titulo) { padding: 14px 14px 10px; margin-bottom: 8px; border-radius: 14px; background: rgba(255, 255, 255, .04); }
+  .planes tbody th { width: auto; padding: 0 0 8px; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; }
+  .planes tbody td, .planes tbody td:nth-child(2) { display: grid; grid-template-columns: 8.4em minmax(0, 1fr); column-gap: 12px; align-items: center;
+    padding: 6px 0; text-align: left; background: none; }
+  .planes tbody td::before { justify-self: start; padding: 5px 8px; border-radius: 8px; font-size: 11px; font-weight: 800;
+    letter-spacing: .03em; text-transform: uppercase; color: var(--tinta); }
+  .planes tbody td:nth-of-type(1)::before { content: "PVC"; background: var(--pvc); }
+  .planes tbody td:nth-of-type(2)::before { content: "Policarbonato"; background: var(--pc); }
+  .planes tbody td:nth-of-type(3)::before { content: "Polipropileno"; background: var(--pp); }
+  /* Un solo dato para los tres (colspan): sin nombre de material */
+  .planes tbody td[colspan] { display: block; }
+  .planes tbody td[colspan]::before { content: none; }
+  .si svg, .no svg, .medio svg { width: 26px; height: 26px; }
+  .planes td.ejemplo { outline-offset: 0; padding: 6px 8px; }
 }
 
 /* 14. MOVIMIENTO REDUCIDO --------------------------------------------------- */
