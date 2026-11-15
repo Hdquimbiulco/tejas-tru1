@@ -1,4 +1,7 @@
 # Publica el sitio en GitHub Pages en cada push a main.
+# Además publica cada versión guardada (etiquetas v*) en /versiones/<etiqueta>/
+# y una página con la lista en /versiones/ (scripts/versiones.mjs explica cómo
+# crear una versión nueva).
 name: Publicar en GitHub Pages
 
 on:
@@ -23,6 +26,8 @@ jobs:
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # todo el historial y las etiquetas (para las versiones)
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -31,6 +36,16 @@ jobs:
       - run: npm run build
         env:
           VITE_BASE: /tejas-tru1/
+      # Cada etiqueta v* se construye aparte, con su propia carpeta como base
+      - name: Construir las versiones guardadas
+        run: |
+          for etiqueta in $(git tag --list 'v*'); do
+            git worktree add --detach "../version-$etiqueta" "$etiqueta"
+            (cd "../version-$etiqueta" && npm ci --no-audit --no-fund && VITE_BASE="/tejas-tru1/versiones/$etiqueta/" npm run build)
+            mkdir -p "dist/versiones/$etiqueta"
+            cp -r "../version-$etiqueta/dist/." "dist/versiones/$etiqueta/"
+          done
+          node scripts/versiones.mjs dist /tejas-tru1/
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
