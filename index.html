@@ -13,18 +13,18 @@
     -  Barra superior, WhatsApp y línea de avance
     1. Portada: teja de PVC con lluvia   #portada
     2. Tres materiales con cuadritos     #materiales
-    2b. Láminas de PVC, policarbonato y polipropileno en 3D  #lamina
+    2b. Láminas de PVC, policarbonato y polipropileno en video  #lamina
     3. Mosaico de imágenes con filtros   #mosaico
     4. Por qué empezar por el material   #propuesta
     5. Comparador por grupos             #comparador
     6. Entrega en obra (línea de paradas)#entrega
-    7. Obras                             #obras
+    7. Mapa de sucursales                #mapa
     8. Cotizar                           #cotizar
     9. Preguntas                         #preguntas
     -  Pie con el logo Truvec
 
   Las imágenes están en public/. En el HTML se escriben sin "public":
-  /img/mosaico/pvc-casa.webp = public/img/mosaico/pvc-casa.webp
+  /img/mosaico/pc-piscina.webp = public/img/mosaico/pc-piscina.webp
   =============================================================================
 -->
 <html lang="es">
@@ -77,11 +77,11 @@
   <a href="#portada" class="logo" aria-label="Truvec, de IFT: ir al inicio">Truvec<sub>IFT</sub></a>
   <nav class="menu" id="menu" aria-label="Secciones">
     <a href="#materiales">Materiales</a>
-    <a href="#lamina">3D</a>
+    <a href="#lamina">Video</a>
     <a href="#mosaico">Galería</a>
     <a href="#comparador">Comparador</a>
     <a href="#entrega">Entrega</a>
-    <a href="#obras">Obras</a>
+    <a href="#mapa">Sucursales</a>
     <a href="#preguntas">Preguntas</a>
   </nav>
   <a href="#cotizar" class="boton boton-cotizar">Cotizar <span aria-hidden="true">→</span></a>
@@ -110,8 +110,8 @@
   <div class="velo"></div>
   <div class="cap cap-inicio" data-tramo="0,0.22">
     <p class="etiqueta">Teja de PVC · Truvec</p>
-    <h1>Que llueva.</h1>
-    <p class="cap-texto">El techo está listo.</p>
+    <h1>La mejor teja.</h1>
+    <p class="cap-texto">Para la lluvia más fuerte.</p>
     <p class="indicacion"><span></span>Desplazar para ver el agua correr</p>
   </div>
   <div class="cap cap-lado" data-tramo="0.27,0.5">
@@ -196,52 +196,75 @@
 </section>
 
 <!-- =========================================================================
-     2b. LÁMINAS EN 3D (modelos hechos en Blender)
-     La sección queda fija mientras se baja (4 pantallas):
-       - primera parte: la lámina de PVC gira y cambia de color;
-       - cambio: el PVC baja y llega la lámina de policarbonato;
-       - última parte: el policarbonato gira.
-     (main.js sección 1b; dibujo en src/lamina3d.js).
-     Cada <li> de .colores es un acabado: data-color = código del color y
-     data-material = a qué lámina pertenece (pvc o pc).
-     PARA AGREGAR UN COLOR DE PVC: copiar un <li data-material="pvc"> y cambiar
-     data-color y el nombre.
-     Los textos .detalle aparecen en su tramo data-tramo="inicio,fin".
+     2b. LÁMINAS EN VIDEO (public/video/laminas.mp4, 26 s, con audio)
+     El video se reproduce solo y con sonido bajo cuando se ve (el botón
+     «Silenciar» lo apaga), se pausa al salir de la sección y sigue donde
+     quedó al volver (main.js sección 1b).
+     El menú de la izquierda sigue al video: data-desde y data-hasta son los
+     segundos del video en que aparece cada material o color. Al tocar un
+     material o un color, el video salta a ese momento.
+       - PVC 0 a 5,5 s (rojo 0 a 1,1; verde 1,1 a 3; azul 3 a 5,5)
+       - policarbonato 5,5 a 13,6 s
+       - polipropileno 13,6 s hasta el final (son dos tomas seguidas)
+     SI SE CAMBIA EL VIDEO: actualizar estos segundos.
+     Los colores sin data-desde (terracota y gris) no salen en el video:
+     se muestran como colores disponibles, sin salto.
+     Los .detalle-grupo se ven mientras el video muestra su material.
      ========================================================================= -->
 <section id="lamina" class="lamina">
-  <canvas aria-label="Láminas de PVC, policarbonato y polipropileno en 3D"></canvas>
   <div class="lamina-texto">
-    <p class="etiqueta">Láminas en 3D</p>
+    <p class="etiqueta">Láminas en video</p>
     <h2 class="titulo">Cada lámina, <em>de cerca</em></h2>
     <div class="acabados">
-      <p class="acabados-nombre">PVC</p>
-      <ul class="colores" aria-label="Colores de la lámina de PVC">
-        <li data-material="pvc" data-color="#b5502f" class="activo"><span></span>Terracota</li>
-        <li data-material="pvc" data-color="#b3261e"><span></span>Rojo</li>
-        <li data-material="pvc" data-color="#2f6b4f"><span></span>Verde</li>
-        <li data-material="pvc" data-color="#2b4c7e"><span></span>Azul</li>
-        <li data-material="pvc" data-color="#6b7075"><span></span>Gris</li>
-      </ul>
-      <p class="acabados-nombre">Policarbonato</p>
-      <ul class="colores" aria-label="Acabados de la lámina de policarbonato">
-        <li data-material="pc" data-color="#e8f4f6"><span></span>Cristal</li>
-      </ul>
-      <p class="acabados-nombre">Polipropileno</p>
-      <ul class="colores" aria-label="Acabados de la lámina de polipropileno">
-        <li data-material="pp" data-color="#9c3a24"><span></span>Rojo óxido</li>
-      </ul>
+      <div class="acabado" data-material="pvc" data-desde="0" data-hasta="5.5">
+        <button type="button" class="acabados-nombre">PVC</button>
+        <ul class="colores" aria-label="Colores de la lámina de PVC">
+          <li style="--muestra: #b3261e" data-desde="0" data-hasta="1.1"><span></span>Rojo</li>
+          <li style="--muestra: #2f6b4f" data-desde="1.1" data-hasta="3"><span></span>Verde</li>
+          <li style="--muestra: #2b4c7e" data-desde="3" data-hasta="5.5"><span></span>Azul</li>
+          <li style="--muestra: #b5502f"><span></span>Terracota</li>
+          <li style="--muestra: #6b7075"><span></span>Gris</li>
+        </ul>
+      </div>
+      <div class="acabado" data-material="pc" data-desde="5.5" data-hasta="13.6">
+        <button type="button" class="acabados-nombre">Policarbonato</button>
+        <ul class="colores" aria-label="Acabados de la lámina de policarbonato">
+          <li style="--muestra: #e8f4f6" data-desde="5.5" data-hasta="13.6"><span></span>Cristal</li>
+        </ul>
+      </div>
+      <div class="acabado" data-material="pp" data-desde="13.6" data-hasta="999">
+        <button type="button" class="acabados-nombre">Polipropileno</button>
+        <ul class="colores" aria-label="Acabados de la lámina de polipropileno">
+          <li style="--muestra: #9c3a24" data-desde="13.6" data-hasta="999"><span></span>Rojo óxido</li>
+        </ul>
+      </div>
     </div>
     <div class="detalles">
-      <p class="detalle" data-tramo="0,0.09"><b>01</b>Cuatro ondas de perfil colonial</p>
-      <p class="detalle" data-tramo="0.09,0.18"><b>02</b>Escalones que imitan el traslape de la teja</p>
-      <p class="detalle" data-tramo="0.18,0.27"><b>03</b>Tornillos con capuchón en la cresta</p>
-      <p class="detalle" data-tramo="0.27,0.36"><b>04</b>Barniz brillante que escurre el agua</p>
-      <p class="detalle" data-tramo="0.42,0.55"><b>05</b>Policarbonato: cubre y deja pasar la luz</p>
-      <p class="detalle" data-tramo="0.55,0.68"><b>06</b>Onda de 76 mm y tornillos con arandela de goma</p>
-      <p class="detalle" data-tramo="0.74,0.87"><b>07</b>Polipropileno: perfil trapezoidal y acabado mate</p>
-      <p class="detalle" data-tramo="0.87,1"><b>08</b>Onda de 13 cm, 35 mm de alto, con capuchón en la cresta</p>
+      <ul class="detalle-grupo" data-material="pvc">
+        <li class="detalle"><b>01</b>Cuatro ondas de perfil colonial</li>
+        <li class="detalle"><b>02</b>Escalones que imitan el traslape de la teja</li>
+        <li class="detalle"><b>03</b>Tornillos con capuchón en la cresta</li>
+        <li class="detalle"><b>04</b>Barniz brillante que escurre el agua</li>
+      </ul>
+      <ul class="detalle-grupo" data-material="pc">
+        <li class="detalle"><b>05</b>Policarbonato: cubre y deja pasar la luz</li>
+        <li class="detalle"><b>06</b>Onda de 76 mm y tornillos con arandela de goma</li>
+      </ul>
+      <ul class="detalle-grupo" data-material="pp">
+        <li class="detalle"><b>07</b>Polipropileno: perfil trapezoidal y acabado mate</li>
+        <li class="detalle"><b>08</b>Onda de 13 cm, 35 mm de alto, con capuchón en la cresta</li>
+      </ul>
     </div>
-    <p class="nota pendiente">Modelos de ejemplo: medidas y tonos por confirmar con la ficha técnica.</p>
+    <p class="nota pendiente">Medidas y tonos por confirmar con la ficha técnica.</p>
+  </div>
+  <div class="lamina-video">
+    <video src="/video/laminas.mp4" poster="/video/laminas-poster.jpg" preload="none" playsinline loop
+      aria-label="Video de las láminas de PVC, policarbonato y polipropileno"></video>
+    <div class="video-controles">
+      <button type="button" class="video-boton" data-accion="pausa" aria-label="Pausar el video">Pausar</button>
+      <button type="button" class="video-boton" data-accion="sonido">Silenciar</button>
+    </div>
+    <div class="video-avance" aria-hidden="true"><span></span></div>
   </div>
 </section>
 
@@ -257,7 +280,7 @@
   <header class="cabecera cabecera-fila">
     <div>
       <p class="etiqueta">Galería</p>
-      <h2 class="titulo">Así se ven puestos</h2>
+      <h2 class="titulo">Nuestros productos</h2>
     </div>
     <div class="filtros" role="tablist" aria-label="Filtrar por material">
       <button type="button" class="filtro activo" data-filtro="todos">Todos</button>
@@ -267,24 +290,23 @@
     </div>
   </header>
   <div class="mosaico">
-    <figure class="pieza" data-material="pvc"><img src="/img/mosaico/pvc-casa.webp" alt="Casa con techo de teja de PVC terracota frente a la montaña" loading="lazy"></figure>
-    <figure class="pieza" data-material="pc"><img src="/img/mosaico/pc-pergola.webp" alt="Pérgola cubierta con policarbonato ondulado transparente" loading="lazy"></figure>
+    <figure class="pieza" data-material="pc"><img src="/img/mosaico/pc-piscina.webp" alt="Cubierta de piscina con policarbonato alveolar" loading="lazy"></figure>
     <figure class="pieza" data-material="pvc"><img src="/img/mosaico/pvc-cumbrera.webp" alt="Cumbrera y faldones de teja de PVC" loading="lazy"></figure>
     <figure class="pieza" data-material="pp"><img src="/img/mosaico/pp-mano.webp" alt="Lámina translúcida de polipropileno sobre el césped" loading="lazy"></figure>
     <figure class="pieza" data-material="pvc"><img src="/img/mosaico/pvc-colores.webp" alt="Láminas de PVC en azul, verde, terracota, rojo y gris" loading="lazy"></figure>
     <figure class="pieza" data-material="pc"><img src="/img/mosaico/pc-colores.webp" alt="Planchas de policarbonato alveolar en varios colores" loading="lazy"></figure>
-    <figure class="pieza" data-material="pvc"><img src="/img/mosaico/pvc-verde.webp" alt="Techo de teja de PVC verde" loading="lazy"></figure>
+    <figure class="pieza" data-material="pvc"><img src="/img/mosaico/pvc-teja-roja.webp" alt="Techo de teja roja de PVC" loading="lazy"></figure>
     <figure class="pieza" data-material="pvc"><img src="/img/mosaico/pvc-alero.webp" alt="Alero con teja de PVC naranja y caballete" loading="lazy"></figure>
-    <figure class="pieza" data-material="pp"><img src="/img/mosaico/pp-roja.webp" alt="Lámina ondulada roja de polipropileno" loading="lazy"></figure>
-    <figure class="pieza" data-material="pc"><img src="/img/mosaico/pc-greca.webp" alt="Teja de policarbonato transparente con perfil de greca" loading="lazy"></figure>
-    <figure class="pieza" data-material="pvc"><img src="/img/mosaico/pvc-techo.webp" alt="Techo rojo de teja de PVC con cumbrera" loading="lazy"></figure>
-    <figure class="pieza" data-material="pvc"><img src="/img/mosaico/pvc-despacho.webp" alt="Láminas de PVC cargadas en un camión para el despacho" loading="lazy"></figure>
-    <figure class="pieza" data-material="pvc"><img src="/img/mosaico/pvc-ondas.webp" alt="Láminas onduladas de PVC en rojo, verde y terracota apiladas" loading="lazy"></figure>
     <figure class="pieza" data-material="pc"><img src="/img/mosaico/pc-alveolar.webp" alt="Plancha de policarbonato alveolar transparente" loading="lazy"></figure>
-    <figure class="pieza" data-material="pvc"><img src="/img/mosaico/pvc-tejado.webp" alt="Tejado de PVC terracota bajo el cielo nublado" loading="lazy"></figure>
+    <figure class="pieza" data-material="pc"><img src="/img/mosaico/pc-greca.webp" alt="Teja de policarbonato transparente con perfil de greca" loading="lazy"></figure>
+    <figure class="pieza" data-material="pc"><img src="/img/mosaico/pc-pergola-metal.webp" alt="Pérgola de estructura metálica cubierta con policarbonato" loading="lazy"></figure>
+    <figure class="pieza" data-material="pvc"><img src="/img/mosaico/pvc-verde.webp" alt="Techo de teja de PVC verde" loading="lazy"></figure>
+    <figure class="pieza" data-material="pc"><img src="/img/mosaico/pc-pergola.webp" alt="Pérgola cubierta con policarbonato ondulado transparente" loading="lazy"></figure>
+    <figure class="pieza" data-material="pvc"><img src="/img/mosaico/pvc-techo.webp" alt="Techo rojo de teja de PVC con cumbrera" loading="lazy"></figure>
+    <figure class="pieza" data-material="pvc"><img src="/img/mosaico/pvc-ondas.webp" alt="Láminas onduladas de PVC en rojo, verde y terracota apiladas" loading="lazy"></figure>
+    <figure class="pieza" data-material="pc"><img src="/img/mosaico/pc-corredor.webp" alt="Corredor techado con policarbonato ondulado" loading="lazy"></figure>
     <figure class="pieza" data-material="pvc"><img src="/img/mosaico/pvc-lamina.webp" alt="Lámina de PVC con perfil de teja colonial" loading="lazy"></figure>
     <figure class="pieza" data-material="pvc"><img src="/img/mosaico/pvc-ondulada.webp" alt="Láminas onduladas de PVC verde y roja" loading="lazy"></figure>
-    <figure class="pieza" data-material="pvc"><img src="/img/mosaico/pvc-perfil.webp" alt="Lámina de PVC terracota vista de frente" loading="lazy"></figure>
   </div>
   <p class="nota">Imágenes de referencia de catálogos; para publicar, se reemplazan por fotos propias.</p>
 </section>
@@ -405,41 +427,33 @@
 </section>
 
 <!-- =========================================================================
-     7. OBRAS: rejilla de tarjetas de distintos tamaños.
-     PARA AGREGAR UNA OBRA: copiar un <article class="obra"> y cambiar la foto,
-     el alt, el título y el material.
+     7. MAPA DE SUCURSALES
+     El mapa lo dibuja src/mapaSucursales.js (MapLibre GL JS) con los límites
+     de public/geo/. La lista y la ficha se llenan desde
+     public/geo/sucursales.json: para agregar o cambiar una sucursal no se
+     toca este HTML (ver public/geo/LEEME.md).
+     CSS: sección 10 (style.css).
      ========================================================================= -->
-<section id="obras" class="seccion">
+<section id="mapa" class="seccion seccion-clara mapa">
   <header class="cabecera">
-    <p class="etiqueta">Obras hechas</p>
-    <h2 class="titulo">Techos que ya están arriba</h2>
+    <p class="etiqueta">Sucursales</p>
+    <h2 class="titulo">Truvec en todo el país</h2>
+    <p class="bajada">Elegir una ciudad en el mapa o en la lista para ver su parroquia y la dirección.</p>
   </header>
-  <div class="obras">
-    <article class="obra obra-alta">
-      <img src="/img/obras/piscina-pc.webp" alt="Cubierta de piscina con policarbonato alveolar" loading="lazy">
-      <div><span class="obra-material" style="--c: var(--pc)">Policarbonato alveolar</span><h3>Cubierta de piscina</h3><p class="pendiente">Ubicación pendiente</p></div>
-    </article>
-    <article class="obra">
-      <img src="/img/obras/patio-pp.webp" alt="Patio cubierto con polipropileno" loading="lazy">
-      <div><span class="obra-material" style="--c: var(--pp)">Polipropileno</span><h3>Patio cubierto</h3><p class="pendiente">Ubicación pendiente</p></div>
-    </article>
-    <article class="obra">
-      <img src="/img/obras/techo-pvc.webp" alt="Techo de teja roja de PVC" loading="lazy">
-      <div><span class="obra-material" style="--c: var(--pvc)">PVC</span><h3>Techo de teja roja</h3><p class="pendiente">Ubicación pendiente</p></div>
-    </article>
-    <article class="obra">
-      <img src="/img/obras/cumbrera-pvc.webp" alt="Cumbrera y faldones de PVC" loading="lazy">
-      <div><span class="obra-material" style="--c: var(--pvc)">PVC</span><h3>Cumbrera y faldones</h3><p class="pendiente">Ubicación pendiente</p></div>
-    </article>
-    <article class="obra">
-      <img src="/img/obras/pergola-pc.webp" alt="Pérgola de policarbonato" loading="lazy">
-      <div><span class="obra-material" style="--c: var(--pc)">Policarbonato</span><h3>Pérgola</h3><p class="pendiente">Ubicación pendiente</p></div>
-    </article>
-    <article class="obra obra-ancha">
-      <img src="/img/obras/corredor-pc.webp" alt="Corredor techado con policarbonato ondulado" loading="lazy">
-      <div><span class="obra-material" style="--c: var(--pc)">Policarbonato ondulado</span><h3>Corredor techado</h3><p class="pendiente">Ubicación pendiente</p></div>
-    </article>
+  <div class="mapa-rejilla">
+    <div class="mapa-lienzo">
+      <div class="mapa-mapa" role="region" aria-label="Mapa de sucursales de Truvec en Ecuador"></div>
+      <nav class="mapa-ruta" aria-label="Nivel del mapa"></nav>
+      <button type="button" class="mapa-volver" hidden>← Todo Ecuador</button>
+      <p class="mapa-estado" role="status">Cargando el mapa…</p>
+      <article class="mapa-ficha" aria-live="polite" hidden></article>
+    </div>
+    <aside class="mapa-lista" aria-label="Lista de sucursales">
+      <p class="mapa-lista-total">Sucursales</p>
+      <ul></ul>
+    </aside>
   </div>
+  <p class="nota">Salvo Quito, las sucursales son ubicaciones de demostración. Límites: INEC 2024.</p>
 </section>
 
 <!-- =========================================================================
@@ -528,11 +542,11 @@
     </div>
     <nav class="pie-menu" aria-label="Secciones (pie)">
       <a href="#materiales">Materiales</a>
-      <a href="#lamina">3D</a>
+      <a href="#lamina">Video</a>
       <a href="#mosaico">Galería</a>
       <a href="#comparador">Comparador</a>
       <a href="#entrega">Entrega</a>
-      <a href="#obras">Obras</a>
+      <a href="#mapa">Sucursales</a>
       <a href="#preguntas">Preguntas</a>
       <a href="#cotizar">Cotizar</a>
     </nav>

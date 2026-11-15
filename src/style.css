@@ -7,7 +7,8 @@
      2. Base                  7. Propuesta              12. Pie
      3. Carga                 8. Comparador             13. Celular
      4. Barra, WhatsApp       9. Entrega en obra        14. Movimiento reducido
-     5. Portada y materiales 10. Obras y cotizar
+     5. Portada y materiales 9b. Mapa de sucursales
+                             10. Cotizar
    clamp(MÍN, IDEAL, MÁX) = tamaño que crece con la pantalla sin pasarse.
    ============================================================================= */
 
@@ -274,19 +275,70 @@ span.ejemplo { padding: 6px 12px 6px 6px; outline-offset: 0; }
 .ruta.activa .parada { border-color: var(--acento); background: #2a1810; }
 .ruta b { display: block; font-family: var(--titulos); font-size: clamp(24px, 2.2vw, 34px); line-height: 1.1; }
 
-/* 10. OBRAS (rejilla de tamaños distintos) ---------------------------------- */
-.obras { display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: clamp(240px, 26vw, 360px); gap: 16px; }
-.obra { position: relative; margin: 0; border-radius: var(--radio); overflow: hidden; }
-.obra-alta { grid-row: span 2; }
-.obra-ancha { grid-column: span 2; }
-.obra img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .7s; }
-.obra:hover img { transform: scale(1.06); }
-.obra > div { position: absolute; inset: auto 0 0 0; padding: 60px 24px 22px; background: linear-gradient(0deg, rgba(8, 11, 13, .9), transparent); }
-.obra-material { display: inline-block; padding: 5px 12px; border-radius: 999px; font-size: 15px; font-weight: 800; color: var(--tinta); background: var(--c); }
-.obra h3 { margin: 10px 0 4px; font-size: clamp(26px, 2.2vw, 34px); }
-.obra p { margin: 0; font-size: clamp(17px, 1.3vw, 20px); }
+/* 9b. MAPA DE SUCURSALES ------------------------------------------------------
+   El mapa (MapLibre) llena .mapa-mapa; encima van la ruta (Ecuador › provincia ›
+   cantón › parroquia), el botón para volver y la ficha. La lista va al lado y,
+   en celular, debajo. Alturas fijas: así, cuando el mapa termina de cargar, la
+   página no cambia de alto. */
+.mapa-rejilla { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 20px; }
+.mapa-lienzo { position: relative; height: clamp(540px, 76vh, 780px); }
+/* .mapa-lienzo delante: gana sobre el position: relative que pone el CSS de MapLibre */
+.mapa-lienzo .mapa-mapa { position: absolute; inset: 0; }
+.mapa-estado {
+  position: absolute; inset: 0; display: grid; place-items: center; margin: 0;
+  font-weight: 700; color: #1b3a5c; text-align: center; padding: 24px;
+}
+.mapa-estado.mapa-error { color: #8a3b12; }
+.mapa-estado[hidden] { display: none; }
+/* Ruta del nivel: cada paso es una píldora; los anteriores se pueden tocar */
+.mapa-ruta { position: absolute; top: 12px; left: 12px; right: 70px; z-index: 2; display: flex; flex-wrap: wrap; gap: 6px; pointer-events: none; }
+.mapa-ruta-paso { pointer-events: auto; padding: 6px 12px; border: 0; border-radius: 999px; background: rgba(255, 255, 255, .92); color: var(--tinta); font: 700 14px/1.2 "Manrope", sans-serif; box-shadow: 0 4px 14px rgba(14, 36, 64, .12); }
+button.mapa-ruta-paso { cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.mapa-ruta-paso + .mapa-ruta-paso::before { content: "› "; color: #8a8f93; }
+.mapa-volver { position: absolute; left: 12px; bottom: 12px; z-index: 2; padding: 10px 16px; border: 0; border-radius: 999px; background: #1b3a5c; color: #fff; font: 800 15px "Manrope", sans-serif; cursor: pointer; box-shadow: 0 6px 18px rgba(14, 36, 64, .3); }
+/* Ficha de la sucursal o la parroquia */
+.mapa-ficha {
+  position: absolute; right: 12px; bottom: 40px; z-index: 3; width: min(340px, calc(100% - 24px)); max-height: calc(100% - 100px); overflow: auto;
+  padding: 20px 22px; border-radius: 18px; background: #fff; color: var(--tinta); box-shadow: 0 18px 44px rgba(14, 36, 64, .25);
+}
+.mapa-ficha h3 { margin: 0 30px 6px 0; font-size: 26px; }
+.mapa-ficha-demo { display: inline-block; margin: 0 0 10px; padding: 3px 10px; border-radius: 999px; background: #fff2c4; color: #6b4b00; font-size: 13px; font-weight: 800; }
+.mapa-ficha dl { margin: 6px 0 14px; display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; font-size: 16px; }
+.mapa-ficha dt { font-weight: 800; color: #5a5f63; }
+.mapa-ficha dd { margin: 0; }
+.mapa-ficha-sub { margin: 4px 0 8px; font-size: 16px; font-weight: 700; }
+.mapa-ficha-acciones { display: flex; flex-wrap: wrap; gap: 8px; }
+.mapa-ficha .boton { padding: 10px 16px; font-size: 15px; }
+.mapa-ficha .boton-claro { background: #f3efe8; }
+.mapa-ficha-cerrar { position: absolute; top: 10px; right: 12px; width: 34px; height: 34px; border: 0; border-radius: 50%; background: #f3efe8; font-size: 22px; line-height: 1; cursor: pointer; }
+/* Lista de sucursales */
+.mapa-lista { height: clamp(540px, 76vh, 780px); overflow: auto; padding: 18px; border-radius: var(--radio); background: #fff; }
+.mapa-lista-total { margin: 0 0 10px; font-family: var(--titulos); font-weight: 800; font-size: 22px; }
+.mapa-lista ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.mapa-item { width: 100%; display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 10px 12px; border: 0; border-radius: 12px; background: transparent; color: var(--tinta); font: 700 17px "Manrope", sans-serif; text-align: left; cursor: pointer; }
+.mapa-item:hover { background: #f3efe8; }
+.mapa-item[aria-pressed="true"] { background: #1b3a5c; color: #fff; }
+.mapa-item-provincia { font-size: 13px; font-weight: 600; opacity: .7; }
+/* Marcador: gota amarilla; el nombre va debajo, fuera de la caja del marcador */
+.mapa-pin { position: relative; width: 28px; height: 36px; padding: 0; border: 0; background: none; cursor: pointer; }
+.mapa-pin svg { width: 100%; height: 100%; filter: drop-shadow(0 3px 3px rgba(0, 0, 0, .35)); transition: transform .2s; }
+.mapa-pin:hover svg, .mapa-pin:focus-visible svg { transform: translateY(-3px) scale(1.06); }
+.mapa-pin-nombre {
+  position: absolute; top: 100%; left: 50%; translate: -50% 2px; white-space: nowrap;
+  font: 800 14px/1 "Manrope", sans-serif; letter-spacing: .04em; text-transform: uppercase; color: #fff;
+  text-shadow: 0 0 3px #0e2440, 0 0 3px #0e2440, 0 1px 2px #0e2440;
+}
+/* Nombre que chocaba con otro: se ve sólo al pasar el mouse o con el foco */
+.mapa-pin-nombre.tapado { opacity: 0; }
+.mapa-pin:hover .mapa-pin-nombre.tapado, .mapa-pin:focus-visible .mapa-pin-nombre.tapado { opacity: 1; z-index: 1; }
+.mapa-pin-cuenta { position: absolute; top: -6px; right: -8px; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px; background: #0e2440; color: #f6c21c; font: 800 12px/20px "Manrope", sans-serif; }
+.mapa-pin-cuenta:empty { display: none; }
+/* Nombres de las parroquias (vista de ciudad) */
+.mapa-etiqueta { padding: 0; border: 0; background: none; color: #fff; font: 700 15px/1.1 "Manrope", sans-serif; text-shadow: 0 0 3px #0e2440, 0 0 3px #0e2440; cursor: pointer; white-space: nowrap; }
+.mapa-etiqueta.elegida { color: #f6c21c; font-size: 17px; font-weight: 800; }
+.mapa .maplibregl-ctrl-attrib { font-size: 12px; }
 
-/* 10b. COTIZAR -------------------------------------------------------------- */
+/* 10. COTIZAR ---------------------------------------------------------------- */
 .cotizar { background: var(--claro); color: var(--tinta); }
 .cotizar .bajada { color: #4a4f53; }
 .cotizar .pendiente { color: #8a5b00; }
@@ -361,39 +413,66 @@ span.ejemplo { padding: 6px 12px 6px 6px; outline-offset: 0; }
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
 
-/* 12b. LÁMINAS EN 3D (#lamina) ----------------------------------------
-   La sección ocupa una pantalla y main.js la deja fija (pin) mientras se baja.
-   El canvas cubre toda la sección; el texto va encima, a la izquierda. */
-.lamina { position: relative; height: 100vh; height: 100svh; overflow: hidden;
+/* 12b. LÁMINAS EN VIDEO (#lamina) -------------------------------------
+   Fondo oscuro; a la izquierda el menú de materiales y a la derecha el video.
+   main.js marca con .activo el material, el color y el grupo de detalles que
+   el video está mostrando. */
+.lamina { display: grid; grid-template-columns: minmax(340px, 500px) 1fr; align-items: center; gap: clamp(28px, 4vw, 64px);
+  min-height: 100vh; min-height: 100svh; padding: 120px var(--gutter) 70px;
   background: radial-gradient(ellipse at 65% 55%, #26303a 0%, var(--fondo) 70%); }
-.lamina > canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
-/* Velo oscuro detrás del texto: de cerca, la lámina ocupa toda la pantalla y sin
-   este velo el texto quedaba encima de las ondas y no se leía. */
-.lamina::before { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
-  background: linear-gradient(90deg, rgba(15,19,22,.94) 0%, rgba(15,19,22,.8) 28%, rgba(15,19,22,0) 50%); }
-.lamina-texto { position: relative; z-index: 1; display: flex; flex-direction: column; justify-content: center;
-  height: 100%; max-width: 520px; padding: 110px 0 40px var(--gutter); pointer-events: none; }
 .lamina-texto .titulo { font-size: clamp(42px, 5vw, 76px); }
-.acabados { margin-top: 26px; }
-.acabados-nombre { margin: 16px 0 8px; font-size: 15px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--suave); }
+.acabados { margin-top: 26px; display: grid; gap: 14px; }
+/* Nombre del material: botón que lleva el video a ese material; la línea de
+   abajo se llena mientras el video lo muestra (--avance de 0 a 1). */
+.acabados-nombre { position: relative; margin: 0 0 8px; padding: 0 0 6px; border: 0; background: none; cursor: pointer;
+  font: 800 15px "Manrope", sans-serif; letter-spacing: .14em; text-transform: uppercase; color: var(--suave); transition: color .3s; }
+.acabados-nombre::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; border-radius: 2px;
+  background: currentColor; transform: scaleX(var(--avance, 0)); transform-origin: left; opacity: 0; }
+.acabado.activo .acabados-nombre { color: #fff; }
+.acabado.activo .acabados-nombre::after { opacity: 1; color: var(--pc); }
+.acabados-nombre:hover { color: #fff; }
 .colores { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
 .colores li { display: flex; align-items: center; gap: 8px; padding: 8px 14px 8px 8px; border-radius: 999px;
   font-size: 17px; font-weight: 800; color: var(--suave); background: rgba(255, 255, 255, .06); transition: background .3s, color .3s; }
+.colores li[role="button"] { cursor: pointer; }
+.colores li[role="button"]:hover { background: rgba(255, 255, 255, .14); }
 .colores span { width: 22px; height: 22px; border-radius: 50%; background: var(--muestra); }
 .colores li.activo { color: var(--tinta); background: #fff; }
-/* Los 4 detalles ocupan el mismo lugar; main.js muestra uno por tramo */
-.detalles { display: grid; margin-top: 34px; }
-.detalle { grid-area: 1 / 1; margin: 0; display: flex; gap: 16px; align-items: baseline;
-  font-family: var(--titulos); font-weight: 800; font-size: clamp(26px, 2.4vw, 36px); line-height: 1.15; }
-.detalle b { font-size: 20px; color: var(--pc); }
-.lamina .nota { margin-top: 30px; }
+/* Los grupos de detalles ocupan el mismo lugar; se ve el del material activo */
+.detalles { display: grid; margin-top: 30px; }
+.detalle-grupo { grid-area: 1 / 1; list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; align-content: start;
+  opacity: 0; visibility: hidden; transform: translateY(14px); transition: opacity .45s, transform .45s, visibility .45s; }
+.detalle-grupo.activo { opacity: 1; visibility: visible; transform: none; }
+.detalle { display: flex; gap: 14px; align-items: baseline;
+  font-family: var(--titulos); font-weight: 800; font-size: clamp(20px, 1.6vw, 25px); line-height: 1.2; }
+.detalle b { font-size: 16px; color: var(--pc); }
+.lamina .nota { margin-top: 26px; }
+/* Video: 16:9, con los botones encima, abajo a la derecha */
+.lamina-video { position: relative; aspect-ratio: 16 / 9; border-radius: var(--radio); overflow: hidden; background: #000;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, .45); }
+.lamina-video video { display: block; width: 100%; height: 100%; object-fit: cover; cursor: pointer; }
+.video-controles { position: absolute; right: 14px; bottom: 18px; display: flex; gap: 8px; }
+.video-boton { padding: 9px 16px; border: 0; border-radius: 999px; background: rgba(15, 19, 22, .72); color: #fff;
+  font: 800 15px "Manrope", sans-serif; cursor: pointer; backdrop-filter: blur(6px); }
+.video-boton:hover { background: rgba(15, 19, 22, .9); }
+.video-avance { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: rgba(255, 255, 255, .18); }
+.video-avance span { display: block; height: 100%; background: var(--pc); transform: scaleX(0); transform-origin: left; }
 
 /* 13. PANTALLAS MEDIANAS Y CELULAR ------------------------------------------ */
 @media (max-width: 1100px) {
   .materiales-rejilla { grid-template-columns: 1fr; max-width: 680px; margin: 0 auto; }
+  /* Láminas en video: una sola columna; el video va entre el título y el menú
+     (display: contents deja que los hijos de .lamina-texto se ordenen solos) */
+  .lamina { grid-template-columns: 1fr; gap: 0; padding-top: 100px; }
+  .lamina-texto { display: contents; }
+  .lamina-video { order: 1; margin-top: 24px; }
+  .lamina .acabados, .lamina .detalles, .lamina .nota { order: 2; }
   .menu a { padding: 10px 10px; }
 }
 @media (max-width: 900px) {
+  /* Mapa: la lista pasa debajo del mapa */
+  .mapa-rejilla { grid-template-columns: 1fr; }
+  .mapa-lista { height: 340px; }
   /* Menú: se esconde y se abre con el botón de tres rayas */
   .barra { padding-left: 22px; gap: 10px; }
   .menu {
@@ -410,25 +489,21 @@ span.ejemplo { padding: 6px 12px 6px 6px; outline-offset: 0; }
   .cotizar-rejilla, .preguntas { grid-template-columns: 1fr; }
   .preguntas-lado { position: static; }
   .ruta { grid-template-columns: repeat(2, 1fr); }
-  .obras { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 640px) {
-  /* Lámina 3D: el texto baja y el modelo queda arriba */
-  .lamina::before { background: linear-gradient(0deg, rgba(15,19,22,.95) 0%, rgba(15,19,22,.85) 45%, rgba(15,19,22,0) 62%); }
-  .lamina-texto { justify-content: flex-end; padding: 0 var(--gutter) 34px; max-width: none; }
+  .mapa-lienzo { height: 540px; margin-inline: calc(-1 * var(--gutter) / 2); }
+  .mapa-ficha { left: 10px; right: 10px; bottom: 10px; width: auto; max-height: 46%; padding: 14px 16px; }
+  .mapa-ficha dl { font-size: 15px; gap: 4px 10px; }
+  .mapa-ficha h3 { font-size: 22px; }
+  .mapa-ruta-paso { font-size: 12px; padding: 5px 10px; }
+  /* Láminas en video: título, video y debajo el menú */
   .lamina-texto .titulo { font-size: 38px; }
   .colores { gap: 6px; }
   .colores li { font-size: 14px; padding: 4px 10px 4px 4px; gap: 6px; }
   .colores span { width: 18px; height: 18px; }
-  /* Con dos grupos de acabados el texto crecía y tapaba la lámina: se compacta */
-  /* Con tres materiales, en celular todas las pastillas van en un solo bloque
-     y sin los rótulos PVC / Policarbonato / Polipropileno */
-  .acabados { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px; }
-  .acabados-nombre { display: none; }
-  .acabados .colores { display: contents; }
-  .lamina .nota { display: none; }
+  .video-boton { padding: 7px 12px; font-size: 13px; }
+  .detalle { font-size: 20px; }
   .lamina .detalles { padding-right: 72px; }   /* no queda bajo el botón de WhatsApp */
-  .detalle { font-size: 24px; }
   body { font-size: 18px; }
   .wa-texto { display: none; }
   .wa-icono { width: 60px; height: 60px; }
@@ -448,9 +523,6 @@ span.ejemplo { padding: 6px 12px 6px 6px; outline-offset: 0; }
   .ruta.activa li::after { transform: scaleY(1); }
   .ruta li:last-child::before, .ruta li:last-child::after { display: none; }
   .parada { margin: 0; flex: none; }
-  .obras { grid-template-columns: 1fr; grid-auto-rows: 300px; }
-  .obra-alta { grid-row: auto; }
-  .obra-ancha { grid-column: auto; }
   .pie-menu { grid-template-columns: 1fr 1fr; gap: 10px 24px; }
   /* Comparador: tabla más compacta; se desliza de lado dentro de su caja */
   .planes { min-width: 660px; font-size: 17px; }

@@ -1,0 +1,342 @@
+[
+  {
+    "id": "quito",
+    "nombre": "Truvec Quito",
+    "ciudad": "Quito",
+    "canton": "Distrito Metropolitano de Quito",
+    "codigoCanton": "EC1701",
+    "provincia": "Pichincha",
+    "parroquia": "Quito",
+    "codigoParroquia": "EC170150",
+    "sector": "Guamaní, sur de Quito",
+    "direccion": "Panamericana Sur S59 S/N y calle Matilde Álvarez",
+    "demo": false,
+    "coordenadas": {
+      "latitud": -0.3544,
+      "longitud": -78.54975
+    }
+  },
+  {
+    "id": "esmeraldas",
+    "nombre": "Truvec Esmeraldas",
+    "ciudad": "Esmeraldas",
+    "canton": "Esmeraldas",
+    "codigoCanton": "EC0801",
+    "provincia": "Esmeraldas",
+    "parroquia": "Esmeraldas",
+    "codigoParroquia": "EC080150",
+    "sector": null,
+    "direccion": null,
+    "demo": true,
+    "coordenadas": {
+      "latitud": 0.9682,
+      "longitud": -79.6517
+    }
+  },
+  {
+    "id": "ibarra",
+    "nombre": "Truvec Ibarra",
+    "ciudad": "Ibarra",
+    "canton": "Ibarra",
+    "codigoCanton": "EC1001",
+    "provincia": "Imbabura",
+    "parroquia": "San Miguel de Ibarra",
+    "codigoParroquia": "EC100150",
+    "sector": null,
+    "direccion": null,
+    "demo": true,
+    "coordenadas": {
+      "latitud": 0.3517,
+      "longitud": -78.1223
+    }
+  },
+  {
+    "id": "lago-agrio",
+    "nombre": "Truvec Lago Agrio",
+    "ciudad": "Lago Agrio",
+    "canton": "Lago Agrio",
+    "codigoCanton": "EC2101",
+    "provincia": "Sucumbíos",
+    "parroquia": "Nueva Loja",
+    "codigoParroquia": "EC210150",
+    "sector": null,
+    "direccion": null,
+    "demo": true,
+    "coordenadas": {
+      "latitud": 0.0847,
+      "longitud": -76.8828
+    }
+  },
+  {
+    "id": "santo-domingo",
+    "nombre": "Truvec Santo Domingo",
+    "ciudad": "Santo Domingo",
+    "canton": "Santo Domingo",
+    "codigoCanton": "EC2301",
+    "provincia": "Santo Domingo de los Tsáchilas",
+    "parroquia": "Santo Domingo de los Colorados",
+    "codigoParroquia": "EC230150",
+    "sector": null,
+    "direccion": null,
+    "demo": true,
+    "coordenadas": {
+      "latitud": -0.253,
+      "longitud": -79.1754
+    }
+  },
+  {
+    "id": "el-coca",
+    "nombre": "Truvec El Coca",
+    "ciudad": "El Coca",
+    "canton": "Francisco de Orellana",
+    "codigoCanton": "EC2201",
+    "provincia": "Orellana",
+    "parroquia": "El Coca",
+    "codigoParroquia": "EC220150",
+    "sector": null,
+    "direccion": null,
+    "demo": true,
+    "coordenadas": {
+      "latitud": -0.4625,
+      "longitud": -76.9842
+    }
+  },
+  {
+    "id": "portoviejo",
+    "nombre": "Truvec Portoviejo",
+    "ciudad": "Portoviejo",
+    "canton": "Portoviejo",
+    "codigoCanton": "EC1301",
+    "provincia": "Manabí",
+    "parroquia": "Portoviejo",
+    "codigoParroquia": "EC130150",
+    "sector": null,
+    "direccion": null,
+    "demo": true,
+    "coordenadas": {
+      "latitud": -1.0546,
+      "longitud": -80.4544
+    }
+  },
+  {
+    "id": "manta",
+    "nombre": "Truvec Manta",
+    "ciudad": "Manta",
+    "canton": "Manta",
+    "codigoCanton": "EC1308",
+    "provincia": "Manabí",
+    "parroquia": "Manta",
+    "codigoParroquia": "EC130850",
+    "sector": null,
+    "direccion": null,
+    "demo": true,
+    "coordenadas": {
+      "latitud": -0.9677,
+      "longitud": -80.7089
+    }
+  },
+  {
+    "id": "quevedo",
+    "nombre": "Truvec Quevedo",
+    "ciudad": "Quevedo",
+    "canton": "Quevedo",
+    "codigoCanton": "EC1205",
+    "provincia": "Los Ríos",
+    "parroquia": "Quevedo",
+    "codigoParroquia": "EC120550",
+    "sector": null,
+    "direccion": null,
+    "demo": true,
+    "coordenadas": {
+      "latitud": -1.0225,
+      "longitud": -79.4604
+    }
+  },
+  {
+    "id": "latacunga",
+    "nombre": "Truvec Latacunga",
+    "ciudad": "Latacunga",
+    "canton": "Latacunga",
+    "codigoCanton": "EC0501",
+    "provincia": "Cotopaxi",
+    "parroquia": "Latacunga",
+    "codigoParroquia": "EC050150",
+    "sector": null,
+    "direccion": null,
+    "demo": true,
+    "coordenadas": {
+      "latitud": -0.9352,
+      "longitud": -78.6155
+    }
+  },
+  {
+    "id": "ambato",
+    "nombre": "Truvec Ambato",
+    "ciudad": "Ambato",
+    "canton": "Ambato",
+    "codigoCanton": "EC1801",
+    "provincia": "Tungurahua",
+    "parroquia": "Ambato",
+    "codigoParroquia": "EC180150",
+    "sector": null,
+    "direccion": null,
+    "demo": true,
+    "coordenadas": {
+      "latitud": -1.2491,
+      "longitud": -78.6168
+    }
+  },
+  {
+    "id": "el-puyo",
+    "nombre": "Truvec El Puyo",
+    "ciudad": "El Puyo",
+    "canton": "Pastaza",
+    "codigoCanton": "EC1601",
+    "provincia": "Pastaza",
+    "parroquia": "Puyo",
+    "codigoParroquia": "EC160150",
+    "sector": null,
+    "direccion": null,
+    "demo": true,
+    "coordenadas": {
+      "latitud": -1.4924,
+      "longitud": -78.0024
+    }
+  },
+  {
+    "id": "babahoyo",
+    "nombre": "Truvec Babahoyo",
+    "ciudad": "Babahoyo",
+    "canton": "Babahoyo",
+    "codigoCanton": "EC1201",
+    "provincia": "Los Ríos",
+    "parroquia": "Babahoyo",
+    "codigoParroquia": "EC120150",
+    "sector": null,
+    "direccion": null,
+    "demo": true,
+    "coordenadas": {
+      "latitud": -1.8022,
+      "longitud": -79.5344
+    }
+  },
+  {
+    "id": "riobamba",
+    "nombre": "Truvec Riobamba",
+    "ciudad": "Riobamba",
+    "canton": "Riobamba",
+    "codigoCanton": "EC0601",
+    "provincia": "Chimborazo",
+    "parroquia": "Riobamba",
+    "codigoParroquia": "EC060150",
+    "sector": null,
+    "direccion": null,
+    "demo": true,
+    "coordenadas": {
+      "latitud": -1.6636,
+      "longitud": -78.6546
+    }
+  },
+  {
+    "id": "guayaquil",
+    "nombre": "Truvec Guayaquil",
+    "ciudad": "Guayaquil",
+    "canton": "Guayaquil",
+    "codigoCanton": "EC0901",
+    "provincia": "Guayas",
+    "parroquia": "Guayaquil",
+    "codigoParroquia": "EC090150",
+    "sector": null,
+    "direccion": null,
+    "demo": true,
+    "coordenadas": {
+      "latitud": -2.1894,
+      "longitud": -79.8891
+    }
+  },
+  {
+    "id": "duran",
+    "nombre": "Truvec Durán",
+    "ciudad": "Durán",
+    "canton": "Durán",
+    "codigoCanton": "EC0907",
+    "provincia": "Guayas",
+    "parroquia": "Eloy Alfaro",
+    "codigoParroquia": "EC090750",
+    "sector": null,
+    "direccion": null,
+    "demo": true,
+    "coordenadas": {
+      "latitud": -2.1703,
+      "longitud": -79.8385
+    }
+  },
+  {
+    "id": "milagro",
+    "nombre": "Truvec Milagro",
+    "ciudad": "Milagro",
+    "canton": "Milagro",
+    "codigoCanton": "EC0910",
+    "provincia": "Guayas",
+    "parroquia": "Milagro",
+    "codigoParroquia": "EC091050",
+    "sector": null,
+    "direccion": null,
+    "demo": true,
+    "coordenadas": {
+      "latitud": -2.1347,
+      "longitud": -79.5872
+    }
+  },
+  {
+    "id": "cuenca",
+    "nombre": "Truvec Cuenca",
+    "ciudad": "Cuenca",
+    "canton": "Cuenca",
+    "codigoCanton": "EC0101",
+    "provincia": "Azuay",
+    "parroquia": "Cuenca",
+    "codigoParroquia": "EC010150",
+    "sector": null,
+    "direccion": null,
+    "demo": true,
+    "coordenadas": {
+      "latitud": -2.9001,
+      "longitud": -79.0059
+    }
+  },
+  {
+    "id": "machala",
+    "nombre": "Truvec Machala",
+    "ciudad": "Machala",
+    "canton": "Machala",
+    "codigoCanton": "EC0701",
+    "provincia": "El Oro",
+    "parroquia": "Machala",
+    "codigoParroquia": "EC070150",
+    "sector": null,
+    "direccion": null,
+    "demo": true,
+    "coordenadas": {
+      "latitud": -3.2581,
+      "longitud": -79.9554
+    }
+  },
+  {
+    "id": "loja",
+    "nombre": "Truvec Loja",
+    "ciudad": "Loja",
+    "canton": "Loja",
+    "codigoCanton": "EC1101",
+    "provincia": "Loja",
+    "parroquia": "Loja",
+    "codigoParroquia": "EC110150",
+    "sector": null,
+    "direccion": null,
+    "demo": true,
+    "coordenadas": {
+      "latitud": -3.9931,
+      "longitud": -79.2042
+    }
+  }
+]

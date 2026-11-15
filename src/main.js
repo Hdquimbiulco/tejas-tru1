@@ -4,7 +4,7 @@
 // Partes del archivo (buscar el título con Ctrl+F):
 //   0. CARGA                      → pantalla de carga con porcentaje
 //   1. PORTADA                    → fotogramas de la lluvia atados al scroll
-//   1b. LÁMINA 3D                 → modelo de Blender que gira y cambia de color
+//   1b. LÁMINAS EN VIDEO          → el menú de materiales sigue al video
 //   2. PALABRAS QUE SE ENCIENDEN  → «Por qué empezar por el material»
 //   3. ENTRADAS                   → tarjetas que aparecen al llegar
 //   4. MOSAICO                    → filtros por material y visor
@@ -12,6 +12,7 @@
 //   6. MENÚ EN CELULAR
 //   7. ENTREGA EN OBRA            → la línea de ruta se llena
 //   8. COTIZAR                    → calculadora, WhatsApp y correo
+//   8b. MAPA DE SUCURSALES        → se carga al acercarse (mapaSucursales.js)
 //   9. PIE Y FIN DE LA CARGA
 //
 // GSAP anima; ScrollTrigger ata la animación al scroll (ver el primer sitio,
@@ -21,7 +22,6 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { cargarFotogramas, crearSecuencia } from './secuencia.js';
-import { cargarLamina, crearLamina } from './lamina3d.js';   // lámina de PVC en 3D
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -38,8 +38,7 @@ const PASO = celular ? 2 : 1;            // en celular, 1 de cada 2 fotogramas
 const escenas = $$('[data-frames]');
 const medios = $$('[data-cargar]');
 const PESO_MEDIO = 6;                    // una foto cuenta como 6 fotogramas
-const PESO_MODELO = 20;                  // el modelo 3D cuenta como 20 fotogramas
-const totalCarga = escenas.reduce((n, e) => n + Math.ceil(e.dataset.total / PASO), 0) + medios.length * PESO_MEDIO + PESO_MODELO;
+const totalCarga = escenas.reduce((n, e) => n + Math.ceil(e.dataset.total / PASO), 0) + medios.length * PESO_MEDIO;
 let cargado = 0;
 function sumar(n = 1) {
   cargado += n;
@@ -47,14 +46,8 @@ function sumar(n = 1) {
   $('#cargaPct').textContent = `${pct} %`;
   $('#cargaBarra').style.transform = `scaleX(${pct / 100})`;
 }
-const [fotogramas, modeloLamina] = await Promise.all([
+const [fotogramas] = await Promise.all([
   Promise.all(escenas.map((e) => cargarFotogramas(e.dataset.frames, +e.dataset.total, PASO, sumar))),
-  // Los tres modelos 3D (PVC, policarbonato y polipropileno). Si alguno no carga,
-  // el sitio sigue sin la sección 3D (modeloLamina = null).
-  Promise.all(['lamina_pvc', 'lamina_policarbonato', 'lamina_polipropileno'].map((n) => cargarLamina(`${import.meta.env.BASE_URL}modelos/${n}.glb`))).then(
-    (m) => { sumar(PESO_MODELO); return m; },
-    () => { sumar(PESO_MODELO); return null; },
-  ),
   ...medios.map((m) => m.decode().catch(() => {}).then(() => sumar(PESO_MEDIO))),
 ]);
 
@@ -89,83 +82,131 @@ escenas.forEach((escena, i) => {
   tl.set({}, {}, 1);
 });
 // ---------------------------------------------------------------------------
-// 1b. LÁMINAS 3D — la sección queda fija; el scroll gira la lámina de PVC, cambia
-// su color y después la reemplaza por la de policarbonato y por la de polipropileno.
-// Un solo escritor: este bloque sólo MIDE (avance, color y etapa); lamina3d.js
-// mueve los modelos.
-//   avance 0    → 0,36 : PVC, un tramo por color
-//   0,36 → 0,42        : cambio a policarbonato (etapa de 0 a 1)
-//   0,42 → 0,68        : policarbonato
-//   0,68 → 0,74        : cambio a polipropileno (etapa de 1 a 2)
-//   0,74 → 1           : polipropileno
-// Dentro del tramo de cada lámina, "recorrido" va de 0 a 1: la cámara se acerca y
-// la recorre de punta a punta (lamina3d.js).
-// Los data-tramo de los .detalle de index.html siguen estos mismos números.
+// 1b. LÁMINAS EN VIDEO — el menú de la izquierda sigue al video
+// HTML: #lamina (ver el comentario 2b de index.html para los segundos).
+//   - El video se reproduce cuando se ve al menos el 40 % y se pausa al salir;
+//     pause() guarda el punto, así que al volver sigue donde quedó (con su audio).
+//   - Suena con volumen bajo (VOLUMEN) y el botón «Silenciar» lo apaga.
+//     Si el navegador no deja sonar todavía (pasa cuando la persona aún no ha
+//     hecho clic ni tocado nada en la página), arranca sin sonido y el sonido
+//     se enciende con el primer clic o tecla, salvo que la persona lo haya
+//     silenciado. En iPhone y iPad el volumen lo manda el equipo: VOLUMEN no
+//     tiene efecto ahí.
+//   - Cada material y cada color con data-desde salta a ese segundo del video.
+//   - Con «reducir movimiento» no arranca solo: se reproduce con «Reproducir».
 // ---------------------------------------------------------------------------
-const FIN_PVC = 0.36;
-const INICIO_PC = 0.42;
-const FIN_PC = 0.68;
-const INICIO_PP = 0.74;
 const seccionLamina = $('#lamina');
-const colores = $$('.colores li');
-const coloresPvc = colores.filter((li) => li.dataset.material === 'pvc');
-const acabadoPc = colores.find((li) => li.dataset.material === 'pc');
-const acabadoPp = colores.find((li) => li.dataset.material === 'pp');
-colores.forEach((li) => li.style.setProperty('--muestra', li.dataset.color));
-if (!modeloLamina) {
-  seccionLamina.hidden = true;             // sin modelos no se muestra la sección
-} else {
-  const lamina = crearLamina(seccionLamina.querySelector('canvas'), ...modeloLamina);
-  let avanceLamina = 0;
-  let colorActivo = 0;                     // índice dentro de coloresPvc
-  let etapa = 0;
-  let recorrido = 0;                       // avance dentro del tramo de la lámina actual                           // 0 = PVC, 1 = policarbonato, 2 = polipropileno
-  let aLaVista = false;
-  let fijacion = null;                     // el ScrollTrigger que deja fija la sección
-  if (!quieto) {
-    // Los detalles 01 a 08 aparecen y se van según su data-tramo.
-    const tlDetalles = gsap.timeline({ defaults: { ease: 'none', duration: 0.04 } });
-    seccionLamina.querySelectorAll('.detalle').forEach((el) => {
-      const [a, b] = el.dataset.tramo.split(',').map(Number);
-      if (a > 0) tlDetalles.fromTo(el, { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0 }, a);
-      if (b < 1) tlDetalles.to(el, { autoAlpha: 0, y: -24 }, b - 0.04);
-    });
-    tlDetalles.set({}, {}, 1);
-    fijacion = ScrollTrigger.create({
-      trigger: seccionLamina,
-      start: 'top top',
-      end: '+=700%',                       // siete pantallas: unas dos y media por lámina
-      pin: true,
-      scrub: 0.4,
-      animation: tlDetalles,
-      onUpdate: (st) => {
-        const p = st.progress;
-        avanceLamina = p;
-        // Un tramo de scroll por color de PVC (5 colores = 5 tramos hasta FIN_PVC).
-        colorActivo = Math.min(coloresPvc.length - 1, Math.floor((p / FIN_PVC) * coloresPvc.length));
-        // gsap.utils.clamp(0, 1, x) deja x entre 0 y 1.
-        etapa = gsap.utils.clamp(0, 1, (p - FIN_PVC) / (INICIO_PC - FIN_PVC))
-          + gsap.utils.clamp(0, 1, (p - FIN_PC) / (INICIO_PP - FIN_PC));
-        // Fuera de los tramos (en los cambios) vale 1 o 0: la cámara está lejos.
-        recorrido = p < INICIO_PC ? gsap.utils.clamp(0, 1, p / FIN_PVC)
-          : p < INICIO_PP ? gsap.utils.clamp(0, 1, (p - INICIO_PC) / (FIN_PC - INICIO_PC))
-          : (p - INICIO_PP) / (1 - INICIO_PP);
-        const activo = etapa > 1.5 ? acabadoPp : etapa > 0.5 ? acabadoPc : coloresPvc[colorActivo];
-        colores.forEach((li) => li.classList.toggle('activo', li === activo));
-      },
-    });
-  }
-  // Se dibuja sólo mientras la sección está en pantalla. Con la sección fija, "en
-  // pantalla" dura hasta el final de la fijación más una pantalla (lo que tarda en
-  // salir por arriba); 'bottom top' a secas no cuenta las pantallas fijas.
-  ScrollTrigger.create({
-    trigger: seccionLamina, start: 'top bottom',
-    end: () => (fijacion ? fijacion.end + innerHeight : 'bottom top'),
-    onToggle: ({ isActive }) => { aLaVista = isActive; },
+const video = seccionLamina.querySelector('video');
+const acabados = [...seccionLamina.querySelectorAll('.acabado')];
+const coloresVideo = [...seccionLamina.querySelectorAll('.colores li[data-desde]')];
+const gruposDetalle = [...seccionLamina.querySelectorAll('.detalle-grupo')];
+const botonPausa = seccionLamina.querySelector('[data-accion="pausa"]');
+const botonSonido = seccionLamina.querySelector('[data-accion="sonido"]');
+const barraVideo = seccionLamina.querySelector('.video-avance span');
+const VOLUMEN = 0.35;                     // 0 = mudo, 1 = volumen completo del equipo
+video.volume = VOLUMEN;
+const enTramo = (el, t) => t >= +el.dataset.desde && t < +el.dataset.hasta;
+
+let videoALaVista = false;
+let pausadoPorPersona = quieto;            // con «reducir movimiento» empieza pausado
+let silenciadoPorPersona = false;
+
+// Marca el material y el color que se ven, y muestra los detalles de ese material.
+function sincronizar() {
+  const t = video.currentTime;
+  const activo = acabados.find((a) => enTramo(a, t)) || acabados[0];
+  acabados.forEach((a) => {
+    const es = a === activo;
+    a.classList.toggle('activo', es);
+    // Avance dentro del tramo del material (la barrita bajo su nombre)
+    const fin = Math.min(+a.dataset.hasta, video.duration || +a.dataset.hasta);
+    a.style.setProperty('--avance', es ? (t - a.dataset.desde) / (fin - a.dataset.desde) : 0);
   });
-  gsap.ticker.add(() => { if (aLaVista) lamina.render(avanceLamina, coloresPvc[colorActivo].dataset.color, etapa, recorrido); });
-  lamina.render(0, coloresPvc[0].dataset.color, 0, 0);
+  coloresVideo.forEach((li) => li.classList.toggle('activo', enTramo(li, t)));
+  gruposDetalle.forEach((g) => g.classList.toggle('activo', g.dataset.material === activo.dataset.material));
+  if (video.duration) barraVideo.style.transform = `scaleX(${t / video.duration})`;
 }
+video.addEventListener('timeupdate', sincronizar);
+// timeupdate llega unas 4 veces por segundo: entre medio, el cuadro de animación
+// mantiene suave la barrita (sólo mientras se reproduce).
+function cuadro() { if (!video.paused) { sincronizar(); requestAnimationFrame(cuadro); } }
+video.addEventListener('play', () => { requestAnimationFrame(cuadro); });
+
+function actualizarSonido() {
+  botonSonido.textContent = video.muted ? 'Activar sonido' : 'Silenciar';
+}
+function reproducir() {
+  video.play().catch((e) => {
+    // El navegador no dejó sonar: se reproduce sin sonido hasta el primer clic.
+    if (e.name !== 'NotAllowedError' || video.muted) return;
+    video.muted = true;
+    actualizarSonido();
+    video.play().catch(() => {});
+  });
+}
+// Primer clic o tecla en la página: si el video quedó mudo por el navegador,
+// se le devuelve el sonido. Los botones del video se manejan solos.
+function devolverSonido(e) {
+  if (e.target.closest && e.target.closest('.video-controles')) return;
+  if (silenciadoPorPersona || !video.muted) return;
+  video.muted = false;
+  actualizarSonido();
+}
+document.addEventListener('click', devolverSonido);
+document.addEventListener('keydown', devolverSonido);
+function actualizarPausa() {
+  botonPausa.textContent = video.paused ? 'Reproducir' : 'Pausar';
+  botonPausa.setAttribute('aria-label', video.paused ? 'Reproducir el video' : 'Pausar el video');
+}
+video.addEventListener('play', actualizarPausa);
+video.addEventListener('pause', actualizarPausa);
+
+// Saltar a un material o a un color: el video va a ese segundo y se reproduce.
+function saltar(segundo) {
+  video.currentTime = segundo;
+  pausadoPorPersona = false;
+  sincronizar();
+  reproducir();
+}
+acabados.forEach((a) => a.querySelector('.acabados-nombre').addEventListener('click', () => saltar(+a.dataset.desde)));
+coloresVideo.forEach((li) => {
+  // El color es un <li>: se le da rol de botón para el teclado y los lectores de pantalla.
+  li.setAttribute('role', 'button');
+  li.tabIndex = 0;
+  li.addEventListener('click', () => saltar(+li.dataset.desde));
+  li.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); saltar(+li.dataset.desde); } });
+});
+
+botonPausa.addEventListener('click', () => {
+  pausadoPorPersona = !video.paused;
+  if (pausadoPorPersona) video.pause(); else reproducir();
+});
+video.addEventListener('click', () => botonPausa.click());
+botonSonido.addEventListener('click', () => {
+  video.muted = !video.muted;
+  silenciadoPorPersona = video.muted;
+  actualizarSonido();
+  if (!video.muted && video.paused) { pausadoPorPersona = false; reproducir(); }
+});
+
+// Se carga cuando falta poco para llegar (el video pesa unos 18 MB) …
+new IntersectionObserver(([e], obs) => {
+  if (e.isIntersecting) { video.preload = 'auto'; obs.disconnect(); }
+}, { rootMargin: '800px 0px' }).observe(video);
+// … y se reproduce sólo a la vista. Al salir se pausa (video y audio).
+new IntersectionObserver(([e]) => {
+  videoALaVista = e.isIntersecting;
+  if (!videoALaVista) video.pause();
+  else if (!pausadoPorPersona) reproducir();
+}, { threshold: 0.4 }).observe(video);
+// Si el navegador pausa el video por su cuenta (pestaña oculta, etc.), al volver
+// a la pestaña sigue si la sección está a la vista.
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) video.pause();
+  else if (videoALaVista && !pausadoPorPersona) reproducir();
+});
+sincronizar();
+actualizarPausa();
 
 if (!quieto) gsap.to('#avance', { scaleX: 1, ease: 'none', scrollTrigger: { start: 0, end: 'max', scrub: true } });
 
@@ -202,7 +243,6 @@ if (!quieto) {
   };
   entrar('.material');
   entrar('.rasgo', { duration: 0.6, stagger: 0.06 });
-  entrar('.obra');
   entrar('.cabecera');
 }
 
@@ -327,6 +367,24 @@ $('#contacto').addEventListener('submit', (e) => {
   }
   aviso.hidden = false;
 });
+
+// ---------------------------------------------------------------------------
+// 8b. MAPA DE SUCURSALES — se descarga recién cuando la sección está por
+// entrar en pantalla (1.000 px antes), para no hacer más lenta la carga.
+// Todo el mapa está en src/mapaSucursales.js.
+// ---------------------------------------------------------------------------
+const seccionMapa = $('#mapa');
+const verMapa = new IntersectionObserver(([e]) => {
+  if (!e.isIntersecting) return;
+  verMapa.disconnect();
+  import('./mapaSucursales.js')
+    .then(({ crearMapa }) => crearMapa(seccionMapa, { whatsapp: WHATSAPP }))
+    .catch((error) => {
+      seccionMapa.querySelector('.mapa-estado').textContent = 'No se pudo cargar el mapa de sucursales.';
+      console.error(error);
+    });
+}, { rootMargin: '1000px 0px' });
+verMapa.observe(seccionMapa);
 
 // ---------------------------------------------------------------------------
 // 9. PIE Y FIN DE LA CARGA
