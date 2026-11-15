@@ -413,12 +413,13 @@ button.mapa-ruta-paso { cursor: pointer; text-decoration: underline; text-underl
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
 
-/* 12b. LÁMINAS EN VIDEO (#lamina) -------------------------------------
-   Fondo oscuro; a la izquierda el menú de materiales y a la derecha el video.
-   main.js marca con .activo el material, el color y el grupo de detalles que
-   el video está mostrando. */
+/* 12b. LÁMINAS EN VIDEO CON SCROLL (#lamina) ---------------------------
+   Fondo oscuro; a la izquierda el menú de materiales y a la derecha el video
+   (fotogramas en un canvas). La sección mide una pantalla y main.js la deja
+   fija mientras se baja; marca con .activo el material, el color y el grupo
+   de detalles del fotograma en pantalla. */
 .lamina { display: grid; grid-template-columns: minmax(340px, 500px) 1fr; align-items: center; gap: clamp(28px, 4vw, 64px);
-  min-height: 100vh; min-height: 100svh; padding: 120px var(--gutter) 70px;
+  height: 100vh; height: 100svh; overflow: hidden; padding: 104px var(--gutter) 40px;
   background: radial-gradient(ellipse at 65% 55%, #26303a 0%, var(--fondo) 70%); }
 .lamina-texto .titulo { font-size: clamp(42px, 5vw, 76px); }
 .acabados { margin-top: 26px; display: grid; gap: 14px; }
@@ -447,14 +448,20 @@ button.mapa-ruta-paso { cursor: pointer; text-decoration: underline; text-underl
   font-family: var(--titulos); font-weight: 800; font-size: clamp(20px, 1.6vw, 25px); line-height: 1.2; }
 .detalle b { font-size: 16px; color: var(--pc); }
 .lamina .nota { margin-top: 26px; }
-/* Video: 16:9, con los botones encima, abajo a la derecha */
-.lamina-video { position: relative; aspect-ratio: 16 / 9; border-radius: var(--radio); overflow: hidden; background: #000;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, .45); }
-.lamina-video video { display: block; width: 100%; height: 100%; object-fit: cover; cursor: pointer; }
-.video-controles { position: absolute; right: 14px; bottom: 18px; display: flex; gap: 8px; }
-.video-boton { padding: 9px 16px; border: 0; border-radius: 999px; background: rgba(15, 19, 22, .72); color: #fff;
-  font: 800 15px "Manrope", sans-serif; cursor: pointer; backdrop-filter: blur(6px); }
-.video-boton:hover { background: rgba(15, 19, 22, .9); }
+/* Video: 16:9; de fondo, el primer fotograma (main.js) mientras llegan los demás */
+.lamina-video { position: relative; aspect-ratio: 16 / 9; border-radius: var(--radio); overflow: hidden;
+  background: #000 center / cover no-repeat; box-shadow: 0 30px 80px rgba(0, 0, 0, .45); }
+.lamina-video canvas { display: block; width: 100%; height: 100%; }
+/* Pantallas de computadora bajas (laptops): el menú se compacta para caber */
+@media (min-width: 1101px) and (max-height: 860px) {
+  .lamina-texto .titulo { font-size: clamp(36px, 3.6vw, 56px); }
+  .acabados { margin-top: 14px; gap: 6px; }
+  .colores li { padding: 6px 12px 6px 6px; font-size: 15px; }
+  .colores span { width: 18px; height: 18px; }
+  .detalles { margin-top: 16px; }
+  .detalle { font-size: 20px; }
+  .lamina .nota { display: none; }
+}
 .video-avance { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: rgba(255, 255, 255, .18); }
 .video-avance span { display: block; height: 100%; background: var(--pc); transform: scaleX(0); transform-origin: left; }
 
@@ -463,9 +470,9 @@ button.mapa-ruta-paso { cursor: pointer; text-decoration: underline; text-underl
   .materiales-rejilla { grid-template-columns: 1fr; max-width: 680px; margin: 0 auto; }
   /* Láminas en video: una sola columna; el video va entre el título y el menú
      (display: contents deja que los hijos de .lamina-texto se ordenen solos) */
-  .lamina { grid-template-columns: 1fr; gap: 0; padding-top: 100px; }
+  .lamina { grid-template-columns: 1fr; gap: 0; padding-top: 96px; align-content: center; }
   .lamina-texto { display: contents; }
-  .lamina-video { order: 1; margin-top: 24px; }
+  .lamina-video { order: 1; margin-top: 18px; }
   .lamina .acabados, .lamina .detalles, .lamina .nota { order: 2; }
   .menu a { padding: 10px 10px; }
 }
@@ -501,8 +508,17 @@ button.mapa-ruta-paso { cursor: pointer; text-decoration: underline; text-underl
   .colores { gap: 6px; }
   .colores li { font-size: 14px; padding: 4px 10px 4px 4px; gap: 6px; }
   .colores span { width: 18px; height: 18px; }
-  .video-boton { padding: 7px 12px; font-size: 13px; }
-  .detalle { font-size: 20px; }
+  /* La sección queda fija y debe caber en una pantalla: los colores van en un
+     solo bloque, sin los rótulos de material, y los detalles más chicos */
+  .lamina .etiqueta, .lamina .nota { display: none; }
+  .acabados { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .acabado { display: contents; }
+  .acabados-nombre { display: none; }
+  .acabados .colores { display: contents; }
+  .detalles { margin-top: 14px; }
+  .detalle-grupo { gap: 6px; }
+  .detalle { font-size: 17px; }
+  .detalle b { font-size: 13px; }
   .lamina .detalles { padding-right: 72px; }   /* no queda bajo el botón de WhatsApp */
   body { font-size: 18px; }
   .wa-texto { display: none; }

@@ -4,7 +4,7 @@
 // Partes del archivo (buscar el título con Ctrl+F):
 //   0. CARGA                      → pantalla de carga con porcentaje
 //   1. PORTADA                    → fotogramas de la lluvia atados al scroll
-//   1b. LÁMINAS EN VIDEO          → el menú de materiales sigue al video
+//   1b. LÁMINAS EN VIDEO          → fotogramas con scroll; el menú los sigue
 //   2. PALABRAS QUE SE ENCIENDEN  → «Por qué empezar por el material»
 //   3. ENTRADAS                   → tarjetas que aparecen al llegar
 //   4. MOSAICO                    → filtros por material y visor
@@ -84,131 +84,88 @@ escenas.forEach((escena, i) => {
   tl.set({}, {}, 1);
 });
 // ---------------------------------------------------------------------------
-// 1b. LÁMINAS EN VIDEO — el menú de la izquierda sigue al video
-// HTML: #lamina (ver el comentario 2b de index.html para los segundos).
-//   - El video se reproduce cuando se ve al menos el 40 % y se pausa al salir;
-//     pause() guarda el punto, así que al volver sigue donde quedó (con su audio).
-//   - Suena con volumen bajo (VOLUMEN) y el botón «Silenciar» lo apaga.
-//     Si el navegador no deja sonar todavía (pasa cuando la persona aún no ha
-//     hecho clic ni tocado nada en la página), arranca sin sonido y el sonido
-//     se enciende con el primer clic o tecla, salvo que la persona lo haya
-//     silenciado. En iPhone y iPad el volumen lo manda el equipo: VOLUMEN no
-//     tiene efecto ahí.
-//   - Cada material y cada color con data-desde salta a ese segundo del video.
-//   - Con «reducir movimiento» no arranca solo: se reproduce con «Reproducir».
+// 1b. LÁMINAS EN VIDEO CON SCROLL — el scroll elige el fotograma
+// HTML: #lamina (ver el comentario 2b de index.html para los números).
+//   - La sección queda fija data-pantallas pantallas (data-pantallas-movil en
+//     celular) y el avance del scroll elige el fotograma, como en la portada.
+//   - Los fotogramas se descargan aparte, cuando falta poco para llegar: no
+//     alargan la pantalla de carga. Mientras tanto se ve el primero de fondo.
+//   - El menú de la izquierda marca el material y el color del fotograma en
+//     pantalla; al tocar uno, la página se desplaza hasta ese punto.
 // ---------------------------------------------------------------------------
 const seccionLamina = $('#lamina');
-const video = seccionLamina.querySelector('video');
+const lienzoLamina = seccionLamina.querySelector('canvas');
+const TOTAL_LAMINA = +seccionLamina.dataset.total;
 const acabados = [...seccionLamina.querySelectorAll('.acabado')];
 const coloresVideo = [...seccionLamina.querySelectorAll('.colores li[data-desde]')];
 const gruposDetalle = [...seccionLamina.querySelectorAll('.detalle-grupo')];
-const botonPausa = seccionLamina.querySelector('[data-accion="pausa"]');
-const botonSonido = seccionLamina.querySelector('[data-accion="sonido"]');
 const barraVideo = seccionLamina.querySelector('.video-avance span');
-const VOLUMEN = 0.35;                     // 0 = mudo, 1 = volumen completo del equipo
-video.volume = VOLUMEN;
-const enTramo = (el, t) => t >= +el.dataset.desde && t < +el.dataset.hasta;
+// Fotograma (1 a TOTAL) ↔ avance del scroll (0 a 1)
+const aFotograma = (p) => 1 + p * (TOTAL_LAMINA - 1);
+const aAvance = (f) => (f - 1) / (TOTAL_LAMINA - 1);
+const enTramo = (el, f) => f >= +el.dataset.desde && f < +el.dataset.hasta + 1;
+// Primer fotograma de fondo mientras llegan los demás
+lienzoLamina.parentElement.style.backgroundImage = `url(${import.meta.env.BASE_URL}frames/laminas/f001.webp)`;
 
-let videoALaVista = false;
-let pausadoPorPersona = quieto;            // con «reducir movimiento» empieza pausado
-let silenciadoPorPersona = false;
+let secuenciaLamina = null;   // se crea al terminar la descarga
+let avanceLamina = 0;
+let fijacionLamina = null;    // el ScrollTrigger que deja fija la sección
 
-// Marca el material y el color que se ven, y muestra los detalles de ese material.
-function sincronizar() {
-  const t = video.currentTime;
-  const activo = acabados.find((a) => enTramo(a, t)) || acabados[0];
+// Marca el material y el color del fotograma en pantalla y muestra sus detalles.
+function sincronizarLamina(p) {
+  avanceLamina = p;
+  const f = Math.round(aFotograma(p));
+  const activo = acabados.find((a) => enTramo(a, f)) || acabados[0];
   acabados.forEach((a) => {
     const es = a === activo;
     a.classList.toggle('activo', es);
-    // Avance dentro del tramo del material (la barrita bajo su nombre)
-    const fin = Math.min(+a.dataset.hasta, video.duration || +a.dataset.hasta);
-    a.style.setProperty('--avance', es ? (t - a.dataset.desde) / (fin - a.dataset.desde) : 0);
+    // Avance dentro del material (la línea bajo su nombre)
+    a.style.setProperty('--avance', es ? (f - a.dataset.desde) / (a.dataset.hasta - a.dataset.desde) : 0);
   });
-  coloresVideo.forEach((li) => li.classList.toggle('activo', enTramo(li, t)));
+  coloresVideo.forEach((li) => li.classList.toggle('activo', enTramo(li, f)));
   gruposDetalle.forEach((g) => g.classList.toggle('activo', g.dataset.material === activo.dataset.material));
-  if (video.duration) barraVideo.style.transform = `scaleX(${t / video.duration})`;
+  barraVideo.style.transform = `scaleX(${p})`;
+  if (secuenciaLamina) secuenciaLamina.mostrar(p);
 }
-video.addEventListener('timeupdate', sincronizar);
-// timeupdate llega unas 4 veces por segundo: entre medio, el cuadro de animación
-// mantiene suave la barrita (sólo mientras se reproduce).
-function cuadro() { if (!video.paused) { sincronizar(); requestAnimationFrame(cuadro); } }
-video.addEventListener('play', () => { requestAnimationFrame(cuadro); });
 
-function actualizarSonido() {
-  botonSonido.textContent = video.muted ? 'Activar sonido' : 'Silenciar';
+// Ir a un material o color: con la sección fija, la página se desplaza hasta
+// ese punto del recorrido; sin fijación («reducir movimiento»), se muestra directo.
+function irAFotograma(f) {
+  const p = aAvance(f);
+  if (fijacionLamina) scrollTo({ top: fijacionLamina.start + p * (fijacionLamina.end - fijacionLamina.start) + 2, behavior: 'smooth' });
+  else sincronizarLamina(p);
 }
-function reproducir() {
-  video.play().catch((e) => {
-    // El navegador no dejó sonar: se reproduce sin sonido hasta el primer clic.
-    if (e.name !== 'NotAllowedError' || video.muted) return;
-    video.muted = true;
-    actualizarSonido();
-    video.play().catch(() => {});
-  });
-}
-// Primer clic o tecla en la página: si el video quedó mudo por el navegador,
-// se le devuelve el sonido. Los botones del video se manejan solos.
-function devolverSonido(e) {
-  if (e.target.closest && e.target.closest('.video-controles')) return;
-  if (silenciadoPorPersona || !video.muted) return;
-  video.muted = false;
-  actualizarSonido();
-}
-document.addEventListener('click', devolverSonido);
-document.addEventListener('keydown', devolverSonido);
-function actualizarPausa() {
-  botonPausa.textContent = video.paused ? 'Reproducir' : 'Pausar';
-  botonPausa.setAttribute('aria-label', video.paused ? 'Reproducir el video' : 'Pausar el video');
-}
-video.addEventListener('play', actualizarPausa);
-video.addEventListener('pause', actualizarPausa);
-
-// Saltar a un material o a un color: el video va a ese segundo y se reproduce.
-function saltar(segundo) {
-  video.currentTime = segundo;
-  pausadoPorPersona = false;
-  sincronizar();
-  reproducir();
-}
-acabados.forEach((a) => a.querySelector('.acabados-nombre').addEventListener('click', () => saltar(+a.dataset.desde)));
+acabados.forEach((a) => a.querySelector('.acabados-nombre').addEventListener('click', () => irAFotograma(+a.dataset.desde)));
 coloresVideo.forEach((li) => {
   // El color es un <li>: se le da rol de botón para el teclado y los lectores de pantalla.
   li.setAttribute('role', 'button');
   li.tabIndex = 0;
-  li.addEventListener('click', () => saltar(+li.dataset.desde));
-  li.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); saltar(+li.dataset.desde); } });
+  li.addEventListener('click', () => irAFotograma(+li.dataset.desde));
+  li.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); irAFotograma(+li.dataset.desde); } });
 });
 
-botonPausa.addEventListener('click', () => {
-  pausadoPorPersona = !video.paused;
-  if (pausadoPorPersona) video.pause(); else reproducir();
-});
-video.addEventListener('click', () => botonPausa.click());
-botonSonido.addEventListener('click', () => {
-  video.muted = !video.muted;
-  silenciadoPorPersona = video.muted;
-  actualizarSonido();
-  if (!video.muted && video.paused) { pausadoPorPersona = false; reproducir(); }
-});
+if (!quieto) {
+  fijacionLamina = ScrollTrigger.create({
+    trigger: seccionLamina,
+    start: 'top top',
+    end: `+=${(celular ? seccionLamina.dataset.pantallasMovil : seccionLamina.dataset.pantallas) * 100}%`,
+    pin: true,
+    // computadora: 0.35 s de suavizado; celular: sigue al dedo sin retraso
+    scrub: celular ? true : 0.35,
+    onUpdate: (st) => sincronizarLamina(st.progress),
+    onToggle: ({ isActive }) => { if (!isActive && secuenciaLamina) secuenciaLamina.liberar(); },  // libera memoria al salir
+  });
+}
+sincronizarLamina(0);
 
-// Se carga cuando falta poco para llegar (el video pesa unos 18 MB) …
-new IntersectionObserver(([e], obs) => {
-  if (e.isIntersecting) { video.preload = 'auto'; obs.disconnect(); }
-}, { rootMargin: '800px 0px' }).observe(video);
-// … y se reproduce sólo a la vista. Al salir se pausa (video y audio).
-new IntersectionObserver(([e]) => {
-  videoALaVista = e.isIntersecting;
-  if (!videoALaVista) video.pause();
-  else if (!pausadoPorPersona) reproducir();
-}, { threshold: 0.4 }).observe(video);
-// Si el navegador pausa el video por su cuenta (pestaña oculta, etc.), al volver
-// a la pestaña sigue si la sección está a la vista.
-document.addEventListener('visibilitychange', () => {
-  if (document.hidden) video.pause();
-  else if (videoALaVista && !pausadoPorPersona) reproducir();
-});
-sincronizar();
-actualizarPausa();
+// Descarga de los fotogramas cuando la sección está a unas dos pantallas.
+new IntersectionObserver(async ([e], obs) => {
+  if (!e.isIntersecting) return;
+  obs.disconnect();
+  const blobs = await cargarFotogramas(seccionLamina.dataset.fotogramas, TOTAL_LAMINA, PASO, () => {});
+  secuenciaLamina = await crearSecuencia(lienzoLamina, blobs);
+  sincronizarLamina(avanceLamina);
+}, { rootMargin: '200% 0px' }).observe(seccionLamina);
 
 if (!quieto) gsap.to('#avance', { scaleX: 1, ease: 'none', scrollTrigger: { start: 0, end: 'max', scrub: true } });
 

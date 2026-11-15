@@ -197,46 +197,51 @@
 </section>
 
 <!-- =========================================================================
-     2b. LÁMINAS EN VIDEO (public/video/laminas.mp4, 26 s, con audio)
-     El video se reproduce solo y con sonido bajo cuando se ve (el botón
-     «Silenciar» lo apaga), se pausa al salir de la sección y sigue donde
-     quedó al volver (main.js sección 1b).
-     El menú de la izquierda sigue al video: data-desde y data-hasta son los
-     segundos del video en que aparece cada material o color. Al tocar un
-     material o un color, el video salta a ese momento.
-       - PVC 0 a 5,5 s (rojo 0 a 1,1; verde 1,1 a 3; azul 3 a 5,5)
-       - policarbonato 5,5 a 13,6 s
-       - polipropileno 13,6 s hasta el final (son dos tomas seguidas)
-     SI SE CAMBIA EL VIDEO: actualizar estos segundos.
+     2b. LÁMINAS EN VIDEO CON SCROLL (fotogramas atados al scroll)
+       data-fotogramas="laminas" → carpeta public/frames/laminas/
+       data-total="244"          → cuántos fotogramas hay
+       data-pantallas="6"        → cuánto hay que bajar para recorrerlo
+       data-pantallas-movil="4"  → lo mismo en celular
+     La sección queda fija mientras se baja y el scroll elige el fotograma
+     (main.js sección 1b). Los fotogramas salen del video de las láminas
+     (uno de cada dos), sin el final del policarbonato que sólo muestra
+     niebla, sin la repetición del polipropileno y sin la toma final.
+     El menú de la izquierda sigue al scroll: data-desde y data-hasta son los
+     NÚMEROS DE FOTOGRAMA (f001 a f244) en que aparece cada material o color.
+     Al tocar un material o un color, la página baja o sube hasta ese punto.
+       - PVC f001 a f078 (rojo 1 a 12; verde 13 a 44; azul 45 a 78)
+       - policarbonato f079 a f160
+       - polipropileno f161 a f244
+     SI SE CAMBIAN LOS FOTOGRAMAS: actualizar estos números y data-total.
      Los colores sin data-desde (terracota y gris) no salen en el video:
      se muestran como colores disponibles, sin salto.
-     Los .detalle-grupo se ven mientras el video muestra su material.
+     Los .detalle-grupo se ven mientras se muestra su material.
      ========================================================================= -->
-<section id="lamina" class="lamina">
+<section id="lamina" class="lamina" data-fotogramas="laminas" data-total="244" data-pantallas="6" data-pantallas-movil="4">
   <div class="lamina-texto">
     <p class="etiqueta">Láminas en video</p>
     <h2 class="titulo">Cada lámina, <em>de cerca</em></h2>
     <div class="acabados">
-      <div class="acabado" data-material="pvc" data-desde="0" data-hasta="5.5">
+      <div class="acabado" data-material="pvc" data-desde="1" data-hasta="78">
         <button type="button" class="acabados-nombre">PVC</button>
         <ul class="colores" aria-label="Colores de la lámina de PVC">
-          <li style="--muestra: #b3261e" data-desde="0" data-hasta="1.1"><span></span>Rojo</li>
-          <li style="--muestra: #2f6b4f" data-desde="1.1" data-hasta="3"><span></span>Verde</li>
-          <li style="--muestra: #2b4c7e" data-desde="3" data-hasta="5.5"><span></span>Azul</li>
+          <li style="--muestra: #b3261e" data-desde="1" data-hasta="12"><span></span>Rojo</li>
+          <li style="--muestra: #2f6b4f" data-desde="13" data-hasta="44"><span></span>Verde</li>
+          <li style="--muestra: #2b4c7e" data-desde="45" data-hasta="78"><span></span>Azul</li>
           <li style="--muestra: #b5502f"><span></span>Terracota</li>
           <li style="--muestra: #6b7075"><span></span>Gris</li>
         </ul>
       </div>
-      <div class="acabado" data-material="pc" data-desde="5.5" data-hasta="13.6">
+      <div class="acabado" data-material="pc" data-desde="79" data-hasta="160">
         <button type="button" class="acabados-nombre">Policarbonato</button>
         <ul class="colores" aria-label="Acabados de la lámina de policarbonato">
-          <li style="--muestra: #e8f4f6" data-desde="5.5" data-hasta="13.6"><span></span>Cristal</li>
+          <li style="--muestra: #e8f4f6" data-desde="79" data-hasta="160"><span></span>Cristal</li>
         </ul>
       </div>
-      <div class="acabado" data-material="pp" data-desde="13.6" data-hasta="999">
+      <div class="acabado" data-material="pp" data-desde="161" data-hasta="244">
         <button type="button" class="acabados-nombre">Polipropileno</button>
         <ul class="colores" aria-label="Acabados de la lámina de polipropileno">
-          <li style="--muestra: #9c3a24" data-desde="13.6" data-hasta="999"><span></span>Rojo óxido</li>
+          <li style="--muestra: #9c3a24" data-desde="161" data-hasta="244"><span></span>Rojo óxido</li>
         </ul>
       </div>
     </div>
@@ -259,12 +264,7 @@
     <p class="nota pendiente">Medidas y tonos por confirmar con la ficha técnica.</p>
   </div>
   <div class="lamina-video">
-    <video src="/video/laminas.mp4" poster="/video/laminas-poster.jpg" preload="none" playsinline loop
-      aria-label="Video de las láminas de PVC, policarbonato y polipropileno"></video>
-    <div class="video-controles">
-      <button type="button" class="video-boton" data-accion="pausa" aria-label="Pausar el video">Pausar</button>
-      <button type="button" class="video-boton" data-accion="sonido">Silenciar</button>
-    </div>
+    <canvas aria-label="Video de las láminas de PVC, policarbonato y polipropileno: avanza con el scroll"></canvas>
     <div class="video-avance" aria-hidden="true"><span></span></div>
   </div>
 </section>
