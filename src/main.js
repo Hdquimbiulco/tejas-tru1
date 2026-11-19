@@ -10,10 +10,9 @@
 //   4. MOSAICO                    → filtros por material y visor
 //   5. COMPARADOR                 → grupos que se abren y cierran
 //   6. MENÚ EN CELULAR
-//   7. ENTREGA EN OBRA            → la línea de ruta se llena
 //   8. COTIZAR                    → calculadora, WhatsApp y correo
 //   8b. MAPA DE SUCURSALES        → se carga al acercarse (mapaSucursales.js)
-//   9. PIE Y FIN DE LA CARGA
+//   9. PIE Y FIN DE LA CARGA     → animación del pie (tejasLetras.js o techoTejas.js) y fin de la carga
 //
 // GSAP anima; ScrollTrigger ata la animación al scroll (ver el primer sitio,
 // tejas/src/main.js, para la explicación de trigger, start, end, scrub y pin).
@@ -260,13 +259,6 @@ $$('.menu a').forEach((a) => a.addEventListener('click', () => {
 }));
 
 // ---------------------------------------------------------------------------
-// 7. ENTREGA EN OBRA — al llegar, la ruta se llena parada por parada
-// --i = número de parada; el CSS lo usa como retraso de cada tramo.
-// ---------------------------------------------------------------------------
-$$('.ruta li').forEach((li, i) => li.style.setProperty('--i', i));
-ScrollTrigger.create({ trigger: '.ruta', start: 'top 75%', once: true, onEnter: () => $('.ruta').classList.add('activa') });
-
-// ---------------------------------------------------------------------------
 // 8. COTIZAR
 // ---------------------------------------------------------------------------
 // Datos de contacto de PRUEBA: reemplazar por los reales de ventas.
@@ -347,14 +339,25 @@ verMapa.observe(seccionMapa);
 
 // ---------------------------------------------------------------------------
 // 9. PIE Y FIN DE LA CARGA
-// La palabra TRUVEC del pie se desliza hacia la izquierda mientras el pie entra.
+// La animación del pie se descarga recién cuando el pie está por entrar en
+// pantalla, para no hacer más lenta la carga. Hay dos:
+//   - tejas que llegan y cubren la palabra (src/tejasLetras.js, canvas 2D):
+//     la que se ve normalmente;
+//   - techo de tejas que se levanta con el puntero (src/techoTejas.js, con
+//     Three.js): se ve agregando ?pie=techo a la dirección,
+//     ej. /tejas-tru1/?pie=techo
 // ---------------------------------------------------------------------------
-if (!quieto) {
-  gsap.fromTo('#gigante', { xPercent: 8 }, {
-    xPercent: -4, ease: 'none',
-    scrollTrigger: { trigger: '.pie', start: 'top bottom', end: 'bottom bottom', scrub: true },
-  });
-}
+const techo = $('#techoTejas');
+const pieTecho = new URLSearchParams(location.search).get('pie') === 'techo';
+const verTecho = new IntersectionObserver(([e]) => {
+  if (!e.isIntersecting) return;
+  verTecho.disconnect();
+  (pieTecho
+    ? import('./techoTejas.js').then(({ crearTecho }) => crearTecho(techo))
+    : import('./tejasLetras.js').then(({ crearLetras }) => crearLetras(techo))
+  ).catch((error) => console.error(error));
+}, { rootMargin: '800px 0px' });
+verTecho.observe(techo);
 ScrollTrigger.refresh();
 document.documentElement.classList.remove('cargando');
 gsap.to('#carga', { autoAlpha: 0, duration: 0.6, delay: 0.15 });

@@ -17,11 +17,10 @@
     3. Mosaico de imágenes con filtros   #mosaico
     4. Por qué empezar por el material   #propuesta
     5. Comparador por grupos             #comparador
-    6. Entrega en obra (línea de paradas)#entrega
     7. Mapa de sucursales                #mapa
     8. Cotizar                           #cotizar
     9. Preguntas                         #preguntas
-    -  Pie con el logo Truvec
+    -  Pie: tejas que cubren la palabra TRUVEC
 
   Las imágenes están en public/. En el HTML se escriben sin "public":
   /img/mosaico/pc-piscina.webp = public/img/mosaico/pc-piscina.webp
@@ -80,7 +79,6 @@
     <a href="#lamina">Video</a>
     <a href="#mosaico">Galería</a>
     <a href="#comparador">Comparador</a>
-    <a href="#entrega">Entrega</a>
     <a href="#mapa">Sucursales</a>
     <a href="#preguntas">Preguntas</a>
   </nav>
@@ -408,29 +406,6 @@
 </section>
 
 <!-- =========================================================================
-     6. ENTREGA EN OBRA: las ciudades como paradas de una línea de ruta.
-     La línea se dibuja al bajar (main.js sección 7).
-     PARA AGREGAR UNA PARADA: copiar un <li> dentro de .ruta.
-     ========================================================================= -->
-<section id="entrega" class="seccion entrega">
-  <header class="cabecera">
-    <p class="etiqueta">Entrega en obra</p>
-    <h2 class="titulo">El camión llega <em>hasta la obra</em></h2>
-    <p class="bajada">Despacho a Quito y sus valles. <span class="pendiente">Días y costo de envío: pendientes.</span></p>
-  </header>
-  <ol class="ruta">
-    <li><span class="parada"></span><b>Quito norte</b></li>
-    <li><span class="parada"></span><b>Quito centro</b></li>
-    <li><span class="parada"></span><b>Quito sur</b></li>
-    <li><span class="parada"></span><b>Cumbayá y Tumbaco</b></li>
-    <li><span class="parada"></span><b>Valle de Los Chillos</b></li>
-    <li><span class="parada"></span><b>Calderón y Carapungo</b></li>
-    <li><span class="parada"></span><b>Pomasqui y San Antonio</b></li>
-    <li><span class="parada"></span><b>Sangolquí</b></li>
-  </ol>
-</section>
-
-<!-- =========================================================================
      7. MAPA DE SUCURSALES
      El mapa lo dibuja src/mapaSucursales.js (MapLibre GL JS) con los límites
      de public/geo/. La lista y la ficha se llenan desde
@@ -536,26 +511,15 @@
 </main>
 
 <!-- =========================================================================
-     PIE: logo Truvec grande, menú repetido y datos pendientes.
+     PIE: tejas que cubren la palabra TRUVEC y datos pendientes.
+     Sobre una pared plomo, las tejas llegan y cubren las letras: lo dibuja
+     src/tejasLetras.js en <canvas id="techoTejas"> (CSS sección 12,
+     .pie-techo). Con ?pie=techo se ve la otra animación, src/techoTejas.js
+     (techo que se levanta con el puntero). Para cambiar la palabra, cambiar
+     la constante PALABRA del archivo que corresponda.
      ========================================================================= -->
 <footer class="pie">
-  <div class="pie-fila">
-    <div>
-      <p class="logo logo-grande">Truvec<sub>IFT</sub></p>
-      <p class="pie-frase">Tejas de PVC, policarbonato y polipropileno.</p>
-    </div>
-    <nav class="pie-menu" aria-label="Secciones (pie)">
-      <a href="#materiales">Materiales</a>
-      <a href="#lamina">Video</a>
-      <a href="#mosaico">Galería</a>
-      <a href="#comparador">Comparador</a>
-      <a href="#entrega">Entrega</a>
-      <a href="#mapa">Sucursales</a>
-      <a href="#preguntas">Preguntas</a>
-      <a href="#cotizar">Cotizar</a>
-    </nav>
-  </div>
-  <p class="pie-gigante" id="gigante" aria-hidden="true">TRUVEC</p>
+  <div class="pie-techo" role="img" aria-label="Truvec"><canvas id="techoTejas"></canvas></div>
   <p class="nota pendiente">Dirección, horarios y redes sociales: pendientes.</p>
 </footer>
 

@@ -261,20 +261,6 @@ section { scroll-margin-top: 96px; }
 .ejemplo { outline: 2px dashed rgba(240, 198, 116, .55); outline-offset: -8px; border-radius: 12px; }
 span.ejemplo { padding: 6px 12px 6px 6px; outline-offset: 0; }
 
-/* 9. ENTREGA EN OBRA (línea de ruta) ---------------------------------------- */
-.entrega { background: linear-gradient(180deg, var(--fondo), #121a1f); }
-.ruta { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); row-gap: 64px; }
-.ruta li { position: relative; padding-right: 20px; }
-/* Cada parada lleva su tramo de línea: gris de fondo (::before) y de color encima (::after).
-   Cuando la ruta entra en pantalla, main.js le pone la clase "activa" y los tramos se
-   llenan uno tras otro (el retraso sale de --i, el número de parada). */
-.ruta li::before, .ruta li::after { content: ""; position: absolute; left: 0; right: 0; top: 13px; height: 4px; background: var(--linea); }
-.ruta li::after { background: linear-gradient(90deg, var(--pc), var(--acento)); transform: scaleX(0); transform-origin: left; transition: transform .5s ease calc(var(--i, 0) * 140ms); }
-.ruta.activa li::after { transform: scaleX(1); }
-.parada { position: relative; z-index: 1; display: block; width: 30px; height: 30px; margin-bottom: 18px; border-radius: 50%; background: var(--fondo); border: 4px solid #3a444b; transition: border-color .3s calc(var(--i, 0) * 140ms), background .3s calc(var(--i, 0) * 140ms); }
-.ruta.activa .parada { border-color: var(--acento); background: #2a1810; }
-.ruta b { display: block; font-family: var(--titulos); font-size: clamp(24px, 2.2vw, 34px); line-height: 1.1; }
-
 /* 9b. MAPA DE SUCURSALES ------------------------------------------------------
    El mapa (MapLibre) llena .mapa-mapa; encima van la ruta (Ecuador › provincia ›
    cantón › parroquia), el botón para volver y la ficha. La lista va al lado y,
@@ -399,19 +385,10 @@ button.mapa-ruta-paso { cursor: pointer; text-decoration: underline; text-underl
 
 /* 12. PIE ------------------------------------------------------------------- */
 .pie { padding: clamp(70px, 10vh, 120px) var(--gutter) 40px; border-top: 1px solid var(--linea); overflow: hidden; }
-.pie-fila { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 40px; }
-.pie-frase { margin: 12px 0 0; font-size: 21px; color: var(--suave); }
-.pie-menu { display: grid; grid-template-columns: repeat(2, auto); gap: 10px 48px; }
-.pie-menu a { font-size: 21px; font-weight: 600; text-decoration: none; color: var(--suave); }
-.pie-menu a:hover { color: var(--texto); }
-/* Palabra gigante con borde y sin relleno; main.js la desliza al bajar */
-.pie-gigante {
-  margin: clamp(40px, 6vh, 80px) 0 0; white-space: nowrap;
-  font-family: var(--titulos); font-weight: 800; font-size: 26vw; line-height: .85; letter-spacing: -.03em;
-  /* Relleno con degradado terracota que se desvanece hacia abajo */
-  background: linear-gradient(180deg, rgba(255, 106, 61, .5), rgba(255, 106, 61, 0) 90%);
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-}
+/* Techo de tejas que esconde la palabra TRUVEC (src/techoTejas.js).
+   aspect-ratio fija la proporción del recuadro; en celular es más alto. */
+.pie-techo { width: 100%; aspect-ratio: 3.4 / 1; border-radius: var(--radio); overflow: hidden; }
+.pie-techo canvas { display: block; width: 100%; height: 100%; }
 
 /* 12b. LÁMINAS EN VIDEO CON SCROLL (#lamina) ---------------------------
    Fondo oscuro; a la izquierda el menú de materiales y a la derecha el video
@@ -495,9 +472,9 @@ button.mapa-ruta-paso { cursor: pointer; text-decoration: underline; text-underl
   .menu-boton > span:not(.oculto) { width: 20px; height: 2px; background: #fff; }
   .cotizar-rejilla, .preguntas { grid-template-columns: 1fr; }
   .preguntas-lado { position: static; }
-  .ruta { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 640px) {
+  .pie-techo { aspect-ratio: 2.2 / 1; }
   .mapa-lienzo { height: 540px; margin-inline: calc(-1 * var(--gutter) / 2); }
   .mapa-ficha { left: 10px; right: 10px; bottom: 10px; width: auto; max-height: 46%; padding: 14px 16px; }
   .mapa-ficha dl { font-size: 15px; gap: 4px 10px; }
@@ -532,14 +509,6 @@ button.mapa-ruta-paso { cursor: pointer; text-decoration: underline; text-underl
   .filtros { border-radius: 20px; }
   .opciones, .medidas { grid-template-columns: 1fr; }
   /* Ruta vertical: la línea baja por la izquierda */
-  .ruta { grid-template-columns: 1fr; row-gap: 26px; padding-left: 4px; }
-  .ruta li { display: flex; align-items: center; gap: 18px; }
-  .ruta li::before, .ruta li::after { left: 13px; right: auto; top: 0; bottom: -26px; width: 4px; height: auto; }
-  .ruta li::after { transform: scaleY(0); transform-origin: top; }
-  .ruta.activa li::after { transform: scaleY(1); }
-  .ruta li:last-child::before, .ruta li:last-child::after { display: none; }
-  .parada { margin: 0; flex: none; }
-  .pie-menu { grid-template-columns: 1fr 1fr; gap: 10px 24px; }
 }
 
 /* Hasta 900 px (tablet y celular): COMPARADOR APILADO. Las cuatro columnas no
